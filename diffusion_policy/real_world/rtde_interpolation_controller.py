@@ -1,6 +1,7 @@
 import os
 import time
 import enum
+import threading
 import multiprocessing as mp
 from multiprocessing.managers import SharedMemoryManager
 import numpy as np
@@ -18,6 +19,65 @@ from diffusion_policy.real_world.ur5e_kinematics import (
     apply_delta_pose, compute_pose_error,
     PAYLOAD_MASS, PAYLOAD_COG,
 )
+
+
+# ur_rtde realtime_control_example priorities: receive thread, control thread, this control loop.
+RT_RECEIVE_PRIORITY, RT_CONTROL_PRIORITY, RT_APP_PRIORITY = 90, 85, 80
+STATE_TIMEOUT_S = 0.02
+STATE_POLL_S = 5e-5
+
+
+def read_new_state(rtde_r, last_robot_time):
+    """Wait for a robot state newer than last_robot_time and return (robot_time, q, qd) from one robot cycle.
+
+    The loop is locked to the robot's RTDE state stream instead of a host timer (host and robot clocks drift, so a
+    host-paced loop reads some robot states twice and skips others). The robot timestamp is read before and after
+    Q/Qd; if the robot published in between, the newer state is read again.
+    """
+    deadline = time.monotonic() + STATE_TIMEOUT_S
+    while True:
+        robot_before = rtde_r.getTimestamp()
+        if last_robot_time is None or robot_before > last_robot_time:
+            q = np.array(rtde_r.getActualQ(), dtype=np.float64)
+            qd = np.array(rtde_r.getActualQd(), dtype=np.float64)
+            if rtde_r.getTimestamp() == robot_before:
+                return robot_before, q, qd
+        if time.monotonic() > deadline:
+            raise RuntimeError("No new robot state within 20 ms; RTDE state stream stalled")
+        time.sleep(STATE_POLL_S)
+
+
+class GripperWorker:
+    """Sends gripper moves from a separate thread: RobotiqGripper.move is a blocking socket round trip and must not
+    delay the 500 Hz torque loop. Only the latest requested open/close state is sent."""
+
+    def __init__(self, gripper):
+        self.gripper = gripper
+        self.requested = None
+        self.event = threading.Event()
+        self.running = True
+        self.thread = threading.Thread(target=self._run, daemon=True)
+        self.thread.start()
+
+    def request(self, close):
+        self.requested = bool(close)
+        self.event.set()
+
+    def _run(self):
+        sent = None
+        while self.running:
+            self.event.wait(0.1)
+            self.event.clear()
+            want = self.requested
+            if want is not None and want != sent:
+                target = self.gripper.get_closed_position() if want else self.gripper.get_open_position()
+                self.gripper.move(target, 128, 128)
+                sent = want
+
+    def stop(self):
+        self.running = False
+        self.event.set()
+        self.thread.join(timeout=1.0)
 
 
 class Command(enum.Enum):
@@ -121,6 +181,8 @@ class RTDEInterpolationController(mp.Process):
         for key in receive_keys:
             example[key] = np.array(getattr(rtde_r, 'get'+key)())
         example['robot_receive_timestamp'] = time.time()
+        example['robot_timestamp'] = float(rtde_r.getTimestamp())
+        example['robot_cycle_gap'] = 1
         example['osc_target_pos'] = np.zeros(3, dtype=np.float64)
         example['osc_target_quat'] = np.array([1.0, 0.0, 0.0, 0.0], dtype=np.float64)
         ring_buffer = SharedMemoryRingBuffer.create_from_examples(
@@ -295,19 +357,24 @@ class RTDEInterpolationController(mp.Process):
 
     # ========= main loop in process ============
     def run(self):
-        # enable soft real-time
+        # enable soft real-time (ur_rtde's recommended SCHED_FIFO priority for the control loop)
         if self.soft_real_time:
-            os.sched_setscheduler(
-                0, os.SCHED_RR, os.sched_param(20))
+            try:
+                os.sched_setscheduler(0, os.SCHED_FIFO, os.sched_param(RT_APP_PRIORITY))
+            except OSError as exc:
+                print(f"[RTDETorqueController] Real-time priority unavailable: {exc}")
 
         # start gripper
         gripper = RobotiqGripper()
         gripper.connect(self.robot_ip, self.gripper_port)
         # start rtde
         robot_ip = self.robot_ip
+        rt = self.soft_real_time
         rtde_c = RTDEControlInterface(hostname=robot_ip, frequency=self.frequency,
-                                      flags=RTDEControlInterface.FLAG_VERBOSE | RTDEControlInterface.FLAG_UPLOAD_SCRIPT)
-        rtde_r = RTDEReceiveInterface(hostname=robot_ip, frequency=self.frequency)
+                                      flags=RTDEControlInterface.FLAG_VERBOSE | RTDEControlInterface.FLAG_UPLOAD_SCRIPT,
+                                      rt_priority=RT_CONTROL_PRIORITY if rt else 0)
+        rtde_r = RTDEReceiveInterface(hostname=robot_ip, frequency=self.frequency,
+                                      rt_priority=RT_RECEIVE_PRIORITY if rt else 0)
         rtde_c.setPayload(PAYLOAD_MASS, PAYLOAD_COG)
 
         try:
@@ -321,6 +388,7 @@ class RTDEInterpolationController(mp.Process):
                                     self.joints_init_speed, 1.4)
 
             gripper.activate()
+            gripper_worker = GripperWorker(gripper)
 
             # main loop
             curr_joints = rtde_r.getActualQ()
@@ -335,12 +403,16 @@ class RTDEInterpolationController(mp.Process):
 
             iter_idx = 0
             keep_running = True
+            last_robot_time = None
+            cycle_s = 1.0 / self.frequency
+            late_cycles = 0
             while keep_running:
-                # start control iteration
-                t_start = rtde_c.initPeriod()
-
-                curr_joints = np.array(rtde_r.getActualQ(), dtype=np.float64)
-                curr_vel = np.array(rtde_r.getActualQd(), dtype=np.float64)
+                # start control iteration on a fresh, consistent robot state (one per robot cycle)
+                t_start = time.perf_counter()
+                robot_time, curr_joints, curr_vel = read_new_state(rtde_r, last_robot_time)
+                cycle_gap = 1 if last_robot_time is None else int(round((robot_time - last_robot_time) / cycle_s))
+                late_cycles += cycle_gap > 1
+                last_robot_time = robot_time
                 
                 # Compute OSC torque command
                 if use_cartesian_target and current_target_ee_pos is not None:
@@ -357,14 +429,14 @@ class RTDEInterpolationController(mp.Process):
                     if self.verbose:
                         print("[RTDETorqueController] directTorque failed")
 
-                # update gripper state
+                # update gripper state (sent from the gripper thread; never blocks this loop)
                 if (current_gripper_close and
                         current_gripper_state == 'open'):
-                    gripper.move(gripper.get_closed_position(), 128, 128)
+                    gripper_worker.request(True)
                     current_gripper_state = 'closed'
                 elif (not current_gripper_close and
                       current_gripper_state == 'closed'):
-                    gripper.move(gripper.get_open_position(), 128, 128)
+                    gripper_worker.request(False)
                     current_gripper_state = 'open'
 
                 # update robot state
@@ -372,6 +444,8 @@ class RTDEInterpolationController(mp.Process):
                 for key in self.receive_keys:
                     state[key] = np.array(getattr(rtde_r, 'get'+key)())
                 state['robot_receive_timestamp'] = time.time()
+                state['robot_timestamp'] = float(robot_time)
+                state['robot_cycle_gap'] = cycle_gap
                 state['osc_target_pos'] = current_target_ee_pos.copy()
                 state['osc_target_quat'] = current_target_ee_quat.copy()
                 
@@ -419,8 +493,7 @@ class RTDEInterpolationController(mp.Process):
                             keep_running = False
                             break
 
-                # regulate frequency
-                rtde_c.waitPeriod(t_start)
+                # no host-timer pacing: the next iteration waits for the next robot state
 
                 # first loop successful, ready to receive command
                 if iter_idx == 0:
@@ -433,6 +506,10 @@ class RTDEInterpolationController(mp.Process):
                           f"{freq}")
 
         finally:
+            if 'gripper_worker' in locals():
+                gripper_worker.stop()
+            if 'late_cycles' in locals():
+                print(f"[RTDETorqueController] {iter_idx} cycles, {late_cycles} late (robot cycle skipped)")
             # mandatory cleanup
             try:
                 # Send zero torque to stop
