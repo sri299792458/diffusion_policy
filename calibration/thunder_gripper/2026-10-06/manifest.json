@@ -66,6 +66,61 @@
       "run_status": "complete",
       "speed": 0,
       "force": 0
+    },
+    {
+      "path": "speed_comparison/recordings/profile_cube60_s0_f0.npz",
+      "original_relative_path": "data/gripper_speed_comparison_8YLDE3/profile_cube60_s0_f0.npz",
+      "selection_role": "closing_speed_comparison_profile",
+      "schema_version": 2,
+      "recorded_unix": 1791304221.2173302,
+      "run_status": "complete",
+      "speed": 0,
+      "force": 0,
+      "review_file": "speed_comparison/speed_comparison.review.json"
+    },
+    {
+      "path": "speed_comparison/recordings/profile_cube60_s128_f0.npz",
+      "original_relative_path": "data/gripper_speed_comparison_8YLDE3/profile_cube60_s128_f0.npz",
+      "selection_role": "closing_speed_comparison_profile",
+      "schema_version": 2,
+      "recorded_unix": 1791304293.1252809,
+      "run_status": "complete",
+      "speed": 128,
+      "force": 0,
+      "review_file": "speed_comparison/speed_comparison.review.json"
+    },
+    {
+      "path": "speed_comparison/recordings/profile_cube60_s255_f0.npz",
+      "original_relative_path": "data/gripper_speed_comparison_8YLDE3/profile_cube60_s255_f0.npz",
+      "selection_role": "closing_speed_comparison_profile",
+      "schema_version": 2,
+      "recorded_unix": 1791304448.054396,
+      "run_status": "complete",
+      "speed": 255,
+      "force": 0,
+      "review_file": "speed_comparison/speed_comparison.review.json"
+    },
+    {
+      "path": "speed_comparison/recordings/profile_empty_s128_f0.npz",
+      "original_relative_path": "data/gripper_speed_comparison_8YLDE3/profile_empty_s128_f0.npz",
+      "selection_role": "closing_speed_comparison_profile",
+      "schema_version": 2,
+      "recorded_unix": 1791304170.2611926,
+      "run_status": "complete",
+      "speed": 128,
+      "force": 0,
+      "review_file": "speed_comparison/speed_comparison.review.json"
+    },
+    {
+      "path": "speed_comparison/recordings/profile_empty_s255_f0.npz",
+      "original_relative_path": "data/gripper_speed_comparison_8YLDE3/profile_empty_s255_f0.npz",
+      "selection_role": "closing_speed_comparison_profile",
+      "schema_version": 2,
+      "recorded_unix": 1791304402.2188735,
+      "run_status": "complete",
+      "speed": 255,
+      "force": 0,
+      "review_file": "speed_comparison/speed_comparison.review.json"
     }
   ],
   "photos": [
@@ -91,7 +146,7 @@
   "video_evidence_file": "video_evidence.json",
   "checksum_scope": "Every file in this package except manifest.json itself; excludes the externally hosted video and code outside this directory.",
   "raw_recordings_and_photos_modified": false,
-  "review_copy_changes": "Relative evidence links normalized for this package; selection roles and profile annotations added. Local originals unchanged.",
+  "review_copy_changes": "Relative evidence links normalized for this package; selection roles and profile annotations added. Local originals unchanged. Speed-comparison source paths normalized to archived recordings; local review and originals unchanged.",
   "excluded": [
     "Failed and aborted recordings",
     "Early monotonic-preload-unloading trials incorrectly labelled slip by an earlier detector",
@@ -101,8 +156,8 @@
   "files": [
     {
       "path": "README.md",
-      "size_bytes": 8879,
-      "sha256": "3c5b545beae810c295ceed5961cf2bf2c5e9280de2a494e0adfc53d8c1be052b"
+      "size_bytes": 9303,
+      "sha256": "3c3589c7a8bfbe43ef3195533cc2f8e37405c4db1ecd03f9cb74d02c84f538b1"
     },
     {
       "path": "photos/01_tpu_grasp_initial.png",
@@ -185,9 +240,64 @@
       "sha256": "790d80d15f5615fc7c58a28205c70978ade6b2421b136f4b379f242049e1eb4d"
     },
     {
+      "path": "speed_comparison/README.md",
+      "size_bytes": 3883,
+      "sha256": "b03da8f29475eca5b8f29b758e0da63d72ee8fed832eec500ee93f99e2fda996"
+    },
+    {
+      "path": "speed_comparison/closing_profiles_comparison.png",
+      "size_bytes": 159892,
+      "sha256": "3a371378c5779448ba894ed5d5550ee3d4431b24ce2c16b546d2e51d29dc8337"
+    },
+    {
+      "path": "speed_comparison/recordings/profile_cube60_s0_f0.npz",
+      "size_bytes": 148932,
+      "sha256": "153548a010adb5e28101cc7ff94fe8ee5bdbb617d4796a2df966be2f51c98d36"
+    },
+    {
+      "path": "speed_comparison/recordings/profile_cube60_s128_f0.npz",
+      "size_bytes": 94548,
+      "sha256": "c3d7e223f65478e1b6adfa611db975a6404919a7d322e0b4d661eb83899295e0"
+    },
+    {
+      "path": "speed_comparison/recordings/profile_cube60_s255_f0.npz",
+      "size_bytes": 83444,
+      "sha256": "2c6ccaaca7606aca0048418b1134a17678a9e8b5eb96da4bb9feacb76dc21dd5"
+    },
+    {
+      "path": "speed_comparison/recordings/profile_empty_s128_f0.npz",
+      "size_bytes": 109300,
+      "sha256": "4d2796bce865af805f20372a4a33beca7ab39745ec2a76c0f691b4c30b0a4fbf"
+    },
+    {
+      "path": "speed_comparison/recordings/profile_empty_s255_f0.npz",
+      "size_bytes": 112760,
+      "sha256": "abf06bfacd8d3109bfdd61e1389deb8e5c11ea5f4ec6d79473e84519f74cec58"
+    },
+    {
+      "path": "speed_comparison/speed_comparison.review.json",
+      "size_bytes": 15118,
+      "sha256": "9c01b49a4dab45ef106e0380e27ca8e1adb12a0df80234a023acaa118d2bbe75"
+    },
+    {
       "path": "video_evidence.json",
       "size_bytes": 2431,
       "sha256": "f9d76baef6d838e650954dd3f16ed40b901dc325ac3523f4387a1c5a8dace76a"
     }
-  ]
+  ],
+  "comparison_operating_points": [
+    {
+      "raw_speed": 0,
+      "raw_force": 0
+    },
+    {
+      "raw_speed": 128,
+      "raw_force": 0
+    },
+    {
+      "raw_speed": 255,
+      "raw_force": 0
+    }
+  ],
+  "speed_comparison_review_file": "speed_comparison/speed_comparison.review.json"
 }

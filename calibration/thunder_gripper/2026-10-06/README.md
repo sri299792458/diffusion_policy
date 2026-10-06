@@ -2,9 +2,11 @@
 
 This package preserves the selected real-world measurements for tuning the simulated Thunder gripper at **raw speed 0 / force 0**, together with three original setup photos and the first 10 mm trial's video link. The pull curves show the combined behavior of the Robotiq mechanism and deformable TPU tips. Simulation parameters have not yet been fitted.
 
+An additional [closing speed comparison](speed_comparison/README.md) archives five new profiles at raw speeds 0, 128 and 255 with force held at 0, plus the reviewed trajectories and timing comparison. Mean cube closing times were 1.849 s, 0.555 s and 0.360 s respectively. These are candidate speed measurements; deployment remains at 0/0 pending selection and a corresponding resisted-pull measurement.
+
 The recordings and photos are unchanged copies of the workstation originals. Reviews add operator observations and interpretation without modifying the raw measurements. [manifest.json](manifest.json) records SHA-256 checksums for every other file in this package and the original recording directory. Failed runs, early misleading force-drop results, and profiles collected at 128/128 are excluded from this package.
 
-## Recordings and selection
+## Original 0/0 recordings and selection
 
 All six recordings completed at speed 0 / force 0, with empty-calibration endpoints 3/226 and no recorded cleanup errors. Raw 0 selects the hardware minimum; it does not mean zero motion or zero force. Pulls used controller-base direction `[0, -1, 0]` (upward on this mounted Thunder), 2 mm/s, and two 40 N software force-change limits: one from the closed-grasp baseline and one from the tared open reference. Requested travel differs by run.
 
@@ -17,7 +19,7 @@ All six recordings completed at speed 0 / force 0, with empty-calibration endpoi
 | [pullout_cube60_s0_f0_travel10mm.npz](recordings/pullout_cube60_s0_f0_travel10mm.npz) | First requested 10 mm trial, hand restraint, observed bending/sliding; associated with the linked video. |
 | [pullout_cube60_s0_f0_travel10mm_1.npz](recordings/pullout_cube60_s0_f0_travel10mm_1.npz) | Repeat requested 10 mm trial. Same hand restraint is inferred from conversation, not independently confirmed; no separate visual-slip confirmation for this repeat. |
 
-Each recording has an adjacent `.review.json`. The [two-run comparison](recordings/pullout_cube60_s0_f0_travel10mm_repeatability.json) preserves the detailed measurements and limitations.
+Each recording above has an adjacent `.review.json`. The [two-run comparison](recordings/pullout_cube60_s0_f0_travel10mm_repeatability.json) preserves the detailed measurements and limitations.
 
 | Pull | Initial axial preload (N) | Peak opposing load (N) | Mean opposing load over 1.5–4.8 mm (N) | Stop travel (mm) | Recorded stop |
 | --- | ---: | ---: | ---: | ---: | --- |

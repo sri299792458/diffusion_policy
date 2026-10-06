@@ -1,0 +1,381 @@
+{
+  "review_date": "2026-10-06",
+  "runs": [
+    {
+      "source_file": "../recordings/profile_empty.npz",
+      "source_sha256": "565f4f597e2d91b58c8f435a6cabf6b3f16dea2e036b4d398cfed22eba6405bc",
+      "label": "empty",
+      "speed": 0,
+      "force": 0,
+      "recorded_unix": 1791292868.9003046,
+      "earlier_empty_speed0_reference": true,
+      "run_status": "complete",
+      "calibrated_motor_endpoints": [
+        3,
+        226
+      ],
+      "checks": {
+        "finite_numeric_arrays": true,
+        "strictly_advancing_times": true,
+        "zero_fault_registers": true,
+        "all_cycles_complete": true,
+        "calibrated_open_reached_every_cycle": true
+      },
+      "cycles": [
+        {
+          "cycle": 1,
+          "close_stable_stop_s": 4.292584949000002,
+          "open_stable_stop_s": 4.230098022999982,
+          "close_final_motor_position": 225,
+          "first_acknowledged_stopped_status_s": 4.292584949000002,
+          "position_register_at_first_stopped_status": 225,
+          "samples": 732,
+          "largest_sample_gap_s": 0.00794210000003659
+        },
+        {
+          "cycle": 2,
+          "close_stable_stop_s": 4.333512025999994,
+          "open_stable_stop_s": 4.235146580999981,
+          "close_final_motor_position": 225,
+          "first_acknowledged_stopped_status_s": 4.333512025999994,
+          "position_register_at_first_stopped_status": 225,
+          "samples": 735,
+          "largest_sample_gap_s": 0.00810144100000798
+        },
+        {
+          "cycle": 3,
+          "close_stable_stop_s": 4.325040526000066,
+          "open_stable_stop_s": 4.226431242999979,
+          "close_final_motor_position": 225,
+          "first_acknowledged_stopped_status_s": 4.325040526000066,
+          "position_register_at_first_stopped_status": 225,
+          "samples": 737,
+          "largest_sample_gap_s": 0.008259503999966
+        }
+      ],
+      "close_mean_s": 4.317045833666687,
+      "close_min_s": 4.292584949000002,
+      "close_max_s": 4.333512025999994,
+      "close_sample_std_s": 0.021603072398847813,
+      "open_mean_s": 4.230558615666648
+    },
+    {
+      "source_file": "recordings/profile_cube60_s0_f0.npz",
+      "source_sha256": "153548a010adb5e28101cc7ff94fe8ee5bdbb617d4796a2df966be2f51c98d36",
+      "label": "cube60",
+      "speed": 0,
+      "force": 0,
+      "recorded_unix": 1791304221.2173302,
+      "earlier_empty_speed0_reference": false,
+      "run_status": "complete",
+      "calibrated_motor_endpoints": [
+        3,
+        226
+      ],
+      "checks": {
+        "finite_numeric_arrays": true,
+        "strictly_advancing_times": true,
+        "zero_fault_registers": true,
+        "all_cycles_complete": true,
+        "calibrated_open_reached_every_cycle": true
+      },
+      "cycles": [
+        {
+          "cycle": 1,
+          "close_stable_stop_s": 1.8520437000006496,
+          "open_stable_stop_s": 1.7360500060003687,
+          "close_final_motor_position": 91,
+          "first_acknowledged_stopped_status_s": 1.8520437000006496,
+          "position_register_at_first_stopped_status": 91,
+          "samples": 357,
+          "largest_sample_gap_s": 0.008103433001451776
+        },
+        {
+          "cycle": 2,
+          "close_stable_stop_s": 1.8508336100003362,
+          "open_stable_stop_s": 1.7412018569993961,
+          "close_final_motor_position": 91,
+          "first_acknowledged_stopped_status_s": 1.8508336100003362,
+          "position_register_at_first_stopped_status": 91,
+          "samples": 337,
+          "largest_sample_gap_s": 0.012400240000715712
+        },
+        {
+          "cycle": 3,
+          "close_stable_stop_s": 1.845554441000786,
+          "open_stable_stop_s": 1.7840574589990865,
+          "close_final_motor_position": 91,
+          "first_acknowledged_stopped_status_s": 1.8391600459999609,
+          "position_register_at_first_stopped_status": 90,
+          "samples": 343,
+          "largest_sample_gap_s": 0.012140250000811648
+        }
+      ],
+      "close_mean_s": 1.8494772503339239,
+      "close_min_s": 1.845554441000786,
+      "close_max_s": 1.8520437000006496,
+      "close_sample_std_s": 0.0034507106877178116,
+      "open_mean_s": 1.7537697739996172
+    },
+    {
+      "source_file": "recordings/profile_cube60_s128_f0.npz",
+      "source_sha256": "c3d7e223f65478e1b6adfa611db975a6404919a7d322e0b4d661eb83899295e0",
+      "label": "cube60",
+      "speed": 128,
+      "force": 0,
+      "recorded_unix": 1791304293.1252809,
+      "earlier_empty_speed0_reference": false,
+      "run_status": "complete",
+      "calibrated_motor_endpoints": [
+        3,
+        226
+      ],
+      "checks": {
+        "finite_numeric_arrays": true,
+        "strictly_advancing_times": true,
+        "zero_fault_registers": true,
+        "all_cycles_complete": true,
+        "calibrated_open_reached_every_cycle": true
+      },
+      "cycles": [
+        {
+          "cycle": 1,
+          "close_stable_stop_s": 0.5519478559999698,
+          "open_stable_stop_s": 0.6258996259984997,
+          "close_final_motor_position": 91,
+          "first_acknowledged_stopped_status_s": 0.5519478559999698,
+          "position_register_at_first_stopped_status": 91,
+          "samples": 93,
+          "largest_sample_gap_s": 0.01317702000051213
+        },
+        {
+          "cycle": 2,
+          "close_stable_stop_s": 0.5592564979997405,
+          "open_stable_stop_s": 0.625477060000776,
+          "close_final_motor_position": 93,
+          "first_acknowledged_stopped_status_s": 0.5592564979997405,
+          "position_register_at_first_stopped_status": 93,
+          "samples": 90,
+          "largest_sample_gap_s": 0.013246814000012819
+        },
+        {
+          "cycle": 3,
+          "close_stable_stop_s": 0.5535435710007732,
+          "open_stable_stop_s": 0.6680007639988617,
+          "close_final_motor_position": 93,
+          "first_acknowledged_stopped_status_s": 0.5535435710007732,
+          "position_register_at_first_stopped_status": 93,
+          "samples": 87,
+          "largest_sample_gap_s": 0.013808236000841134
+        }
+      ],
+      "close_mean_s": 0.5549159750001612,
+      "close_min_s": 0.5519478559999698,
+      "close_max_s": 0.5592564979997405,
+      "close_sample_std_s": 0.0038427440096050302,
+      "open_mean_s": 0.6397924833327124
+    },
+    {
+      "source_file": "recordings/profile_cube60_s255_f0.npz",
+      "source_sha256": "2c6ccaaca7606aca0048418b1134a17678a9e8b5eb96da4bb9feacb76dc21dd5",
+      "label": "cube60",
+      "speed": 255,
+      "force": 0,
+      "recorded_unix": 1791304448.054396,
+      "earlier_empty_speed0_reference": false,
+      "run_status": "complete",
+      "calibrated_motor_endpoints": [
+        3,
+        226
+      ],
+      "checks": {
+        "finite_numeric_arrays": true,
+        "strictly_advancing_times": true,
+        "zero_fault_registers": true,
+        "all_cycles_complete": true,
+        "calibrated_open_reached_every_cycle": true
+      },
+      "cycles": [
+        {
+          "cycle": 1,
+          "close_stable_stop_s": 0.32788048399925174,
+          "open_stable_stop_s": 0.4680565749986272,
+          "close_final_motor_position": 97,
+          "first_acknowledged_stopped_status_s": 0.32129292500030715,
+          "position_register_at_first_stopped_status": 84,
+          "samples": 117,
+          "largest_sample_gap_s": 0.012777664000168443
+        },
+        {
+          "cycle": 2,
+          "close_stable_stop_s": 0.3445684540001821,
+          "open_stable_stop_s": 0.49477251899952535,
+          "close_final_motor_position": 96,
+          "first_acknowledged_stopped_status_s": 0.3445684540001821,
+          "position_register_at_first_stopped_status": 96,
+          "samples": 96,
+          "largest_sample_gap_s": 0.013092880999465706
+        },
+        {
+          "cycle": 3,
+          "close_stable_stop_s": 0.40613328899962653,
+          "open_stable_stop_s": 0.4748170230013784,
+          "close_final_motor_position": 99,
+          "first_acknowledged_stopped_status_s": 0.35518907599907834,
+          "position_register_at_first_stopped_status": 98,
+          "samples": 116,
+          "largest_sample_gap_s": 0.012500419001298724
+        }
+      ],
+      "close_mean_s": 0.35952740899968677,
+      "close_min_s": 0.32788048399925174,
+      "close_max_s": 0.40613328899962653,
+      "close_sample_std_s": 0.04121532631939938,
+      "open_mean_s": 0.47921537233317696
+    },
+    {
+      "source_file": "recordings/profile_empty_s128_f0.npz",
+      "source_sha256": "4d2796bce865af805f20372a4a33beca7ab39745ec2a76c0f691b4c30b0a4fbf",
+      "label": "empty",
+      "speed": 128,
+      "force": 0,
+      "recorded_unix": 1791304170.2611926,
+      "earlier_empty_speed0_reference": false,
+      "run_status": "complete",
+      "calibrated_motor_endpoints": [
+        3,
+        226
+      ],
+      "checks": {
+        "finite_numeric_arrays": true,
+        "strictly_advancing_times": true,
+        "zero_fault_registers": true,
+        "all_cycles_complete": true,
+        "calibrated_open_reached_every_cycle": true
+      },
+      "cycles": [
+        {
+          "cycle": 1,
+          "close_stable_stop_s": 1.2868102009997529,
+          "open_stable_stop_s": 1.3423811180000484,
+          "close_final_motor_position": 226,
+          "first_acknowledged_stopped_status_s": 1.2868102009997529,
+          "position_register_at_first_stopped_status": 226,
+          "samples": 147,
+          "largest_sample_gap_s": 0.012955638998391805
+        },
+        {
+          "cycle": 2,
+          "close_stable_stop_s": 1.2809760229993117,
+          "open_stable_stop_s": 1.3273150980003265,
+          "close_final_motor_position": 226,
+          "first_acknowledged_stopped_status_s": 1.2809760229993117,
+          "position_register_at_first_stopped_status": 226,
+          "samples": 147,
+          "largest_sample_gap_s": 0.01303853800163779
+        },
+        {
+          "cycle": 3,
+          "close_stable_stop_s": 1.2841034299999592,
+          "open_stable_stop_s": 1.3439960060004523,
+          "close_final_motor_position": 226,
+          "first_acknowledged_stopped_status_s": 1.2841034299999592,
+          "position_register_at_first_stopped_status": 226,
+          "samples": 261,
+          "largest_sample_gap_s": 0.012171060001492151
+        }
+      ],
+      "close_mean_s": 1.2839632179996745,
+      "close_min_s": 1.2809760229993117,
+      "close_max_s": 1.2868102009997529,
+      "close_sample_std_s": 0.0029196151782342468,
+      "open_mean_s": 1.3378974073336092
+    },
+    {
+      "source_file": "recordings/profile_empty_s255_f0.npz",
+      "source_sha256": "abf06bfacd8d3109bfdd61e1389deb8e5c11ea5f4ec6d79473e84519f74cec58",
+      "label": "empty",
+      "speed": 255,
+      "force": 0,
+      "recorded_unix": 1791304402.2188735,
+      "earlier_empty_speed0_reference": false,
+      "run_status": "complete",
+      "calibrated_motor_endpoints": [
+        3,
+        226
+      ],
+      "checks": {
+        "finite_numeric_arrays": true,
+        "strictly_advancing_times": true,
+        "zero_fault_registers": true,
+        "all_cycles_complete": true,
+        "calibrated_open_reached_every_cycle": true
+      },
+      "cycles": [
+        {
+          "cycle": 1,
+          "close_stable_stop_s": 0.8429301390006003,
+          "open_stable_stop_s": 0.8788629199989373,
+          "close_final_motor_position": 226,
+          "first_acknowledged_stopped_status_s": 0.8429301390006003,
+          "position_register_at_first_stopped_status": 226,
+          "samples": 203,
+          "largest_sample_gap_s": 0.00915373499992711
+        },
+        {
+          "cycle": 2,
+          "close_stable_stop_s": 0.8207514719997562,
+          "open_stable_stop_s": 0.8906988500002626,
+          "close_final_motor_position": 226,
+          "first_acknowledged_stopped_status_s": 0.8207514719997562,
+          "position_register_at_first_stopped_status": 226,
+          "samples": 198,
+          "largest_sample_gap_s": 0.00839770899983705
+        },
+        {
+          "cycle": 3,
+          "close_stable_stop_s": 0.8208500110013119,
+          "open_stable_stop_s": 0.8799852619995363,
+          "close_final_motor_position": 226,
+          "first_acknowledged_stopped_status_s": 0.8208500110013119,
+          "position_register_at_first_stopped_status": 226,
+          "samples": 175,
+          "largest_sample_gap_s": 0.013352464000490727
+        }
+      ],
+      "close_mean_s": 0.8281772073338894,
+      "close_min_s": 0.8207514719997562,
+      "close_max_s": 0.8429301390006003,
+      "close_sample_std_s": 0.01277650860194938,
+      "open_mean_s": 0.8831823439995787
+    }
+  ],
+  "mean_close_speedup_ratios": {
+    "empty": {
+      "speed128_vs_speed0_mean_close_speedup": 3.3622815460339623,
+      "speed255_vs_speed0_mean_close_speedup": 5.212707854595929,
+      "speed255_vs_speed128_mean_close_speedup": 1.5503484117041506
+    },
+    "cube60": {
+      "speed128_vs_speed0_mean_close_speedup": 3.3328960304907183,
+      "speed255_vs_speed0_mean_close_speedup": 5.144189856010492,
+      "speed255_vs_speed128_mean_close_speedup": 1.5434594445639183
+    }
+  },
+  "contact_height_control": "Operator was instructed to keep the same contact height and orientation; actual height was not measured or independently confirmed.",
+  "interpretation": "Speed 128 closes on the cube in approximately 0.555 s and speed 255 in approximately 0.360 s versus 1.849 s at speed 0. Speed 255 is approximately 5.1 times faster, not ten times faster. The motor stops at 96-99 at speed 255 versus 91-93 at the lower settings. This can reflect dynamic grasp deformation and/or placement variation; these profiles do not separate those causes.",
+  "timing_definition": "Time from issuing the close command to the beginning of the final continuous unchanged stopped register/status interval. The extra 0.5 s confirmation interval is excluded. Command communication and register reporting latency are included.",
+  "speed255_late_register_changes": "The third cycle first reported a stopped state at approximately 0.355 s with position 98, then reported position 99 at 0.406 s. The first cycle reported status stopped with position 84 before reporting 97 one sample later. Position and status are read sequentially and firmware registers update discretely; these are not synchronized evidence of physical motion after stop.",
+  "limitations": [
+    "Three cycles per setting are descriptive observations, not a statistical repeatability tolerance.",
+    "Motor position is not a loaded TPU fingertip gap or deformation measurement.",
+    "Profiles contain no wrist force measurement, so the earlier speed0 resisted-pull target cannot be assumed unchanged at higher closing speed.",
+    "No corresponding simulation profile was measured in this analysis; a quantitative sim timing match remains unverified.",
+    "The empty speed0 reference is from an earlier same-day recording, not a new interleaved trial."
+  ],
+  "plot": {
+    "path": "closing_profiles_comparison.png",
+    "sha256": "3a371378c5779448ba894ed5d5550ee3d4431b24ce2c16b546d2e51d29dc8337"
+  },
+  "raw_recordings_modified": false
+}
