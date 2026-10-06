@@ -1,0 +1,21 @@
+{
+  "source_file": "pullout_cube60_s0_f0_setup_preload_retry2.npz",
+  "source_sha256": "70ca3dcd2cc465f44112c9b442d08934e1f39faf31da03aa64f670c2eb13f0af",
+  "review_date": "2026-10-06",
+  "operator_setup": "User confirmed the cube rested loose on the table and was not held by hand or attached to a fixture.",
+  "run_status": "complete",
+  "stop_reason": "max_travel",
+  "preload_norm_N": 24.089627965734284,
+  "preload_along_direction_N": 23.918132961637923,
+  "peak_opposing_axial_load_N": 0.8250681620892574,
+  "peak_absolute_axial_change_from_closed_baseline_N": 24.743201123727182,
+  "stopped_travel_mm": 4.932478034959164,
+  "slip_armed": false,
+  "slip_candidate": false,
+  "include_as_fixed_fixture_pullout_calibration": false,
+  "useful_for": "Closing preload and unloading during lift of an unrestrained cube.",
+  "interpretation": "The approximately 24 N closing preload unloaded to near zero axial load, with less than 1 N opposing load afterward. This is consistent with lifting the loose cube, not pulling it out of the grasp.",
+  "limitation": "No fixed restraint; no measured pull-out capacity. The approximately 24.7 N closed-baseline change is not holding force.",
+  "cleanup_errors": [],
+  "selection_role": "loose_cube_control_exclude_from_resisted_pull_fit"
+}

@@ -1,0 +1,193 @@
+{
+  "package_date": "2026-10-06",
+  "robot": "Thunder UR5e with Robotiq and yellow TPU fingertips",
+  "selected_operating_point": {
+    "raw_speed": 0,
+    "raw_force": 0
+  },
+  "simulation_fit_status": "not_fitted",
+  "recordings": [
+    {
+      "path": "recordings/profile_empty.npz",
+      "original_relative_path": "data/gripper_calibration_pendant_0_0/profile_empty.npz",
+      "selection_role": "empty_motor_timing",
+      "schema_version": 2,
+      "recorded_unix": 1791292868.9003046,
+      "run_status": "complete",
+      "speed": 0,
+      "force": 0
+    },
+    {
+      "path": "recordings/profile_cube60.npz",
+      "original_relative_path": "data/gripper_calibration_pendant_0_0/profile_cube60.npz",
+      "selection_role": "separate_unmeasured_contact_height_profiles",
+      "schema_version": 2,
+      "recorded_unix": 1791292962.2957158,
+      "run_status": "complete",
+      "speed": 0,
+      "force": 0
+    },
+    {
+      "path": "recordings/pullout_cube60_s0_f0_setup_preload_retry2.npz",
+      "original_relative_path": "data/gripper_calibration_pendant_0_0/pullout_cube60_s0_f0_setup_preload_retry2.npz",
+      "selection_role": "loose_cube_control_exclude_from_resisted_pull_fit",
+      "schema_version": 2,
+      "recorded_unix": 1791295076.7148433,
+      "run_status": "complete",
+      "speed": 0,
+      "force": 0
+    },
+    {
+      "path": "recordings/pullout_cube60_s0_f0_setup_preload_retry4.npz",
+      "original_relative_path": "data/gripper_calibration_pendant_0_0/pullout_cube60_s0_f0_setup_preload_retry4.npz",
+      "selection_role": "provisional_hand_restrained_bending_and_sliding_curve",
+      "schema_version": 2,
+      "recorded_unix": 1791295228.3204565,
+      "run_status": "complete",
+      "speed": 0,
+      "force": 0
+    },
+    {
+      "path": "recordings/pullout_cube60_s0_f0_travel10mm.npz",
+      "original_relative_path": "data/gripper_calibration_pendant_0_0/pullout_cube60_s0_f0_travel10mm.npz",
+      "selection_role": "provisional_hand_restrained_curve_with_video",
+      "schema_version": 2,
+      "recorded_unix": 1791295765.3520412,
+      "run_status": "complete",
+      "speed": 0,
+      "force": 0
+    },
+    {
+      "path": "recordings/pullout_cube60_s0_f0_travel10mm_1.npz",
+      "original_relative_path": "data/gripper_calibration_pendant_0_0/pullout_cube60_s0_f0_travel10mm_1.npz",
+      "selection_role": "provisional_repeat_curve_restraint_inferred",
+      "schema_version": 2,
+      "recorded_unix": 1791295958.905179,
+      "run_status": "complete",
+      "speed": 0,
+      "force": 0
+    }
+  ],
+  "photos": [
+    {
+      "path": "photos/01_tpu_grasp_initial.png",
+      "original_attachment_basename": "codex-clipboard-2e06a492-eab5-467f-a119-82a83da74b73.png",
+      "context": "Initial TPU deformation; raw settings unknown.",
+      "modified": false
+    },
+    {
+      "path": "photos/02_pendant_grasp.png",
+      "original_attachment_basename": "codex-clipboard-db78ea7b-1f7b-4691-857d-5c3d4a10ba08.png",
+      "context": "Operator-selected pendant grasp.",
+      "modified": false
+    },
+    {
+      "path": "photos/03_pendant_settings_0_0.png",
+      "original_attachment_basename": "codex-clipboard-4c269059-cf85-4f9d-b685-39fcec653cdd.png",
+      "context": "Pendant Speed 0% / Force 0%; original orientation.",
+      "modified": false
+    }
+  ],
+  "video_evidence_file": "video_evidence.json",
+  "checksum_scope": "Every file in this package except manifest.json itself; excludes the externally hosted video and code outside this directory.",
+  "raw_recordings_and_photos_modified": false,
+  "review_copy_changes": "Relative evidence links normalized for this package; selection roles and profile annotations added. Local originals unchanged.",
+  "excluded": [
+    "Failed and aborted recordings",
+    "Early monotonic-preload-unloading trials incorrectly labelled slip by an earlier detector",
+    "Profiles at 128/128",
+    "Derived video frames; use the linked original video"
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "size_bytes": 8879,
+      "sha256": "3c5b545beae810c295ceed5961cf2bf2c5e9280de2a494e0adfc53d8c1be052b"
+    },
+    {
+      "path": "photos/01_tpu_grasp_initial.png",
+      "size_bytes": 1584432,
+      "sha256": "ebd3150739958ad4d56acbc02c0fe2ab5e9e2f0b13f7e283b8db078638546312"
+    },
+    {
+      "path": "photos/02_pendant_grasp.png",
+      "size_bytes": 896676,
+      "sha256": "2f8d0a0d8e77980dd801172dc95c0d48e015f88eb29117f7bc1fde77129d13fd"
+    },
+    {
+      "path": "photos/03_pendant_settings_0_0.png",
+      "size_bytes": 2265778,
+      "sha256": "5d7eccef68ee20a8970db450cd78832bc4a5550fe6fbd86d97eeedda0a4dc3f2"
+    },
+    {
+      "path": "recordings/profile_cube60.npz",
+      "size_bytes": 171172,
+      "sha256": "92a681a2bd72a155a5e5a1a4827a6db417a78f8f6433dea3c94fa46048f9405e"
+    },
+    {
+      "path": "recordings/profile_cube60.review.json",
+      "size_bytes": 1817,
+      "sha256": "2c89ca5d1b2fe40c74363725915aa6d144cddeefd912a7456ff408addfc2e057"
+    },
+    {
+      "path": "recordings/profile_empty.npz",
+      "size_bytes": 246128,
+      "sha256": "565f4f597e2d91b58c8f435a6cabf6b3f16dea2e036b4d398cfed22eba6405bc"
+    },
+    {
+      "path": "recordings/profile_empty.review.json",
+      "size_bytes": 1463,
+      "sha256": "f2245fda78599f6109ee6f1709920c82c0d555abd306059f9c0dbdf768574d64"
+    },
+    {
+      "path": "recordings/pullout_cube60_s0_f0_setup_preload_retry2.npz",
+      "size_bytes": 225618,
+      "sha256": "70ca3dcd2cc465f44112c9b442d08934e1f39faf31da03aa64f670c2eb13f0af"
+    },
+    {
+      "path": "recordings/pullout_cube60_s0_f0_setup_preload_retry2.review.json",
+      "size_bytes": 1281,
+      "sha256": "c205b28ec8832449c20911adf7bbd771b17d119bb56845df1f3feaa0e9236785"
+    },
+    {
+      "path": "recordings/pullout_cube60_s0_f0_setup_preload_retry4.npz",
+      "size_bytes": 227834,
+      "sha256": "4bc38120d39ca8f6a00ae0fa0eca0611416d361c289f57c2e9ae5bae76d19853"
+    },
+    {
+      "path": "recordings/pullout_cube60_s0_f0_setup_preload_retry4.review.json",
+      "size_bytes": 2581,
+      "sha256": "a1f93ae8daad3d43363c799b808a736041d2a07b3a7f9bbd0b2a3a78a89f6d8b"
+    },
+    {
+      "path": "recordings/pullout_cube60_s0_f0_travel10mm.npz",
+      "size_bytes": 242702,
+      "sha256": "54f1423552e8709143b1f30bf05b55a9610c908ba0a91e5ffb9db129a1c660af"
+    },
+    {
+      "path": "recordings/pullout_cube60_s0_f0_travel10mm.review.json",
+      "size_bytes": 3126,
+      "sha256": "e54455c5f204c7bbf9fb1a8e0500c4fae9c74c75ce25127e078a8b3bf3ec8ef7"
+    },
+    {
+      "path": "recordings/pullout_cube60_s0_f0_travel10mm_1.npz",
+      "size_bytes": 234694,
+      "sha256": "23040b352010be4b0372894f7bb00efe3b02f81686595c7b1fa51c29ef0c50ec"
+    },
+    {
+      "path": "recordings/pullout_cube60_s0_f0_travel10mm_1.review.json",
+      "size_bytes": 2593,
+      "sha256": "16a06bdaeb084d9b30e799acb2683f2863cc74aaeb6ca5cbf921e0708d47dc5e"
+    },
+    {
+      "path": "recordings/pullout_cube60_s0_f0_travel10mm_repeatability.json",
+      "size_bytes": 4183,
+      "sha256": "790d80d15f5615fc7c58a28205c70978ade6b2421b136f4b379f242049e1eb4d"
+    },
+    {
+      "path": "video_evidence.json",
+      "size_bytes": 2431,
+      "sha256": "f9d76baef6d838e650954dd3f16ed40b901dc325ac3523f4387a1c5a8dace76a"
+    }
+  ]
+}

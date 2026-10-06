@@ -1,0 +1,118 @@
+{
+  "review_date": "2026-10-06",
+  "runs": [
+    {
+      "source_file": "pullout_cube60_s0_f0_travel10mm.npz",
+      "source_sha256": "54f1423552e8709143b1f30bf05b55a9610c908ba0a91e5ffb9db129a1c660af",
+      "run_status": "complete",
+      "stop_reason": "slip",
+      "settings": {
+        "label": "cube60",
+        "speed": 0,
+        "force": 0,
+        "direction_base": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "pull_speed": 0.002,
+        "max_travel": 0.01,
+        "max_force": 40.0,
+        "max_total_force": 40.0
+      },
+      "calibration_status": "complete",
+      "faults": [
+        0
+      ],
+      "cleanup_errors": [],
+      "finite_force_pose": true,
+      "fresh_timestamps": true,
+      "preload_norm_N": 24.851731642925596,
+      "preload_xyz_N": [
+        -0.6767123601193391,
+        -24.836724121028578,
+        -0.5364335649157436
+      ],
+      "baseline_torque_relative_open_Nm": [
+        -0.11415144714557811,
+        0.10421555492117522,
+        -0.0506927764126539
+      ],
+      "grasp_position": 101,
+      "peak_opposing_N": 8.168788378461983,
+      "peak_opposing_travel_mm": 2.9706545300993703,
+      "mean_opposing_N_1_5_to_4_8_mm": 7.093372365820657,
+      "std_opposing_N_1_5_to_4_8_mm": 0.5167330925794946,
+      "stopped_travel_mm": 7.166828763640664,
+      "final_opposing_N": 4.789142223931919,
+      "peak_vector_force_change_N": 33.12832179009915,
+      "peak_overall_load_during_pull_N": 24.513843314457823,
+      "slip_armed": true,
+      "slip_candidate": true
+    },
+    {
+      "source_file": "pullout_cube60_s0_f0_travel10mm_1.npz",
+      "source_sha256": "23040b352010be4b0372894f7bb00efe3b02f81686595c7b1fa51c29ef0c50ec",
+      "run_status": "complete",
+      "stop_reason": "slip",
+      "settings": {
+        "label": "cube60",
+        "speed": 0,
+        "force": 0,
+        "direction_base": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "pull_speed": 0.002,
+        "max_travel": 0.01,
+        "max_force": 40.0,
+        "max_total_force": 40.0
+      },
+      "calibration_status": "complete",
+      "faults": [
+        0
+      ],
+      "cleanup_errors": [],
+      "finite_force_pose": true,
+      "fresh_timestamps": true,
+      "preload_norm_N": 25.791972290558338,
+      "preload_xyz_N": [
+        -1.1186283841150666,
+        -25.452512136720795,
+        4.017975996103239
+      ],
+      "baseline_torque_relative_open_Nm": [
+        0.7560360237810618,
+        0.013140737447915395,
+        0.16583499114913197
+      ],
+      "grasp_position": 100,
+      "peak_opposing_N": 7.986246984875159,
+      "peak_opposing_travel_mm": 1.391446751434211,
+      "mean_opposing_N_1_5_to_4_8_mm": 6.594946118621662,
+      "std_opposing_N_1_5_to_4_8_mm": 0.624948362202715,
+      "stopped_travel_mm": 6.184250114164181,
+      "final_opposing_N": 4.738465732842775,
+      "peak_vector_force_change_N": 33.56955354349652,
+      "peak_overall_load_during_pull_N": 24.845936084134024,
+      "slip_armed": true,
+      "slip_candidate": true
+    }
+  ],
+  "same_recorded_settings": true,
+  "peak_difference_N": -0.18254139358682409,
+  "peak_difference_percent": -2.234620180247504,
+  "same_window_mean_difference_percent": -7.02664715024206,
+  "stop_travel_difference_mm": -0.9825786494764834,
+  "curve_comparison": {
+    "bin_width_mm": 0.25,
+    "travel_range_mm": [
+      1.5,
+      5.75
+    ],
+    "binned_force_mean_rmse_N": 0.7550258850572062
+  },
+  "interpretation": "Peak opposing load reproduced to about 2.2 percent across these two runs. Both curves load and subsequently weaken, but the same-window mean load is about 7 percent lower in the repeat and the force-drop stop occurs about 1 mm earlier. This supports a provisional peak target near 8 N; the complete force-versus-travel curve is approximately repeatable, not identical.",
+  "limitation": "Two runs do not establish a statistical repeatability tolerance or instrument accuracy. The initial off-axis force and torque differ, so equivalent motor stopping positions do not establish identical contact/restraint geometry. Exact sliding onset was not timestamped; force-drop trigger is not a static breakaway measurement."
+}

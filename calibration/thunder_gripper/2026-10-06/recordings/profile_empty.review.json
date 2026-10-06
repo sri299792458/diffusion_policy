@@ -1,0 +1,46 @@
+{
+  "source_file": "profile_empty.npz",
+  "source_sha256": "565f4f597e2d91b58c8f435a6cabf6b3f16dea2e036b4d398cfed22eba6405bc",
+  "review_date": "2026-10-06",
+  "run_status": "complete",
+  "settings": {
+    "speed": 0,
+    "force": 0,
+    "label": "empty"
+  },
+  "calibrated_open_position": 3,
+  "calibrated_closed_position": 226,
+  "cycles": [
+    {
+      "cycle": 0,
+      "final_close_motor_position": 225,
+      "final_open_motor_position": 3,
+      "close_stopped_s": 4.292584949000002,
+      "open_stopped_s": 4.230098022999982,
+      "close_final_status": "AT_DEST",
+      "open_final_status": "AT_DEST"
+    },
+    {
+      "cycle": 1,
+      "final_close_motor_position": 225,
+      "final_open_motor_position": 3,
+      "close_stopped_s": 4.333512025999994,
+      "open_stopped_s": 4.235146580999981,
+      "close_final_status": "AT_DEST",
+      "open_final_status": "AT_DEST"
+    },
+    {
+      "cycle": 2,
+      "final_close_motor_position": 225,
+      "final_open_motor_position": 3,
+      "close_stopped_s": 4.325040526000066,
+      "open_stopped_s": 4.226431242999979,
+      "close_final_status": "AT_DEST",
+      "open_final_status": "AT_DEST"
+    }
+  ],
+  "cleanup_errors": [],
+  "interpretation": "Three empty close/open cycles at the selected operating point; use for motor timing and travel.",
+  "limitation": "Register trajectories describe the motor, not loaded fingertip geometry or gripping force.",
+  "selection_role": "empty_motor_timing"
+}

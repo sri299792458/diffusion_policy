@@ -85,7 +85,7 @@ class RobotLockedLoopTest(unittest.TestCase):
                 self.assertTrue(all(s['robot_cycle_gap'] == 1 for s in states))
                 self.assertEqual(rtde_c.directTorque.call_count, 300 + 1)       # one per cycle, then zero torque
                 rtde_c.initPeriod.assert_not_called(); rtde_c.waitPeriod.assert_not_called()
-                gripper.move.assert_called_once_with(255, 128, 128)             # sent by the gripper thread
+                gripper.move.assert_called_once_with(255, 0, 0)                 # selected pendant settings, separate thread
 
 
 if __name__ == '__main__':

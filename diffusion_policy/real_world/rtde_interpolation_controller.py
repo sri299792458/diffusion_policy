@@ -12,7 +12,9 @@ from diffusion_policy.shared_memory.shared_memory_queue import (
     SharedMemoryQueue, Empty)
 from diffusion_policy.shared_memory.shared_memory_ring_buffer import (
     SharedMemoryRingBuffer)
-from diffusion_policy.real_world.robotiq_gripper import RobotiqGripper
+from diffusion_policy.real_world.robotiq_gripper import (
+    RobotiqGripper, DEFAULT_GRIPPER_SPEED, DEFAULT_GRIPPER_FORCE,
+)
 from diffusion_policy.real_world.ur5e_kinematics import (
     forward_kinematics_calibrated, compute_jacobian_calibrated,
     get_ee_pose, axis_angle_to_quat, quat_to_axis_angle,
@@ -71,7 +73,7 @@ class GripperWorker:
             want = self.requested
             if want is not None and want != sent:
                 target = self.gripper.get_closed_position() if want else self.gripper.get_open_position()
-                self.gripper.move(target, 128, 128)
+                self.gripper.move(target, DEFAULT_GRIPPER_SPEED, DEFAULT_GRIPPER_FORCE)
                 sent = want
 
     def stop(self):

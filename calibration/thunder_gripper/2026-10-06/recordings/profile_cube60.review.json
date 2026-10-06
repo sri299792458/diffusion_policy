@@ -1,0 +1,49 @@
+{
+  "source_file": "profile_cube60.npz",
+  "source_sha256": "92a681a2bd72a155a5e5a1a4827a6db417a78f8f6433dea3c94fa46048f9405e",
+  "review_date": "2026-10-06",
+  "run_status": "complete",
+  "settings": {
+    "speed": 0,
+    "force": 0,
+    "label": "cube60"
+  },
+  "calibrated_open_position": 3,
+  "calibrated_closed_position": 226,
+  "cycles": [
+    {
+      "cycle": 0,
+      "final_close_motor_position": 112,
+      "final_open_motor_position": 3,
+      "close_stopped_s": 2.3134769060000053,
+      "open_stopped_s": 2.1150991450000447,
+      "close_final_status": "STOPPED_INNER_OBJECT",
+      "open_final_status": "AT_DEST"
+    },
+    {
+      "cycle": 1,
+      "final_close_motor_position": 85,
+      "final_open_motor_position": 3,
+      "close_stopped_s": 1.7099241699999084,
+      "open_stopped_s": 1.6291223330000548,
+      "close_final_status": "STOPPED_INNER_OBJECT",
+      "open_final_status": "AT_DEST"
+    },
+    {
+      "cycle": 2,
+      "final_close_motor_position": 137,
+      "final_open_motor_position": 3,
+      "close_stopped_s": 2.742125944999998,
+      "open_stopped_s": 2.5820631830000593,
+      "close_final_status": "STOPPED_INNER_OBJECT",
+      "open_final_status": "AT_DEST"
+    }
+  ],
+  "cleanup_errors": [],
+  "operator_setup": "Operator moved the cube vertically between the fingertips between cycles, changing contact height.",
+  "same_contact_height_repetitions": false,
+  "contact_height_mm": null,
+  "interpretation": "Preserve each trajectory as a separate unmeasured contact geometry. Do not average the three motor stop positions as repeatability at one grasp depth.",
+  "limitation": "Motor position does not measure the loaded TPU fingertip gap. Cube contact height and tip deformation were not instrumented.",
+  "selection_role": "separate_unmeasured_contact_height_profiles"
+}

@@ -1,0 +1,51 @@
+{
+  "duration_s": 40.492344,
+  "associated_recording": "recordings/pullout_cube60_s0_f0_travel10mm.npz",
+  "association_basis": "Phone filename timestamp around 09:09:23 local and video calibration/positioning/closing/pull sequence match the first 10 mm trial initialized at 09:09:25 local; the repeat was initialized at 09:12:38.",
+  "observations": [
+    "Cube is on the table and the operator holds its other faces during final closing and pulling.",
+    "TPU pad shape changes during closing against the cube.",
+    "During the upward pull, the pads deform and move along the cube face while the cube appears to remain against the tabletop.",
+    "The gripper opens after the pull stop; the cube stays on the table."
+  ],
+  "approximate_video_windows_s": {
+    "final_closing": [
+      25.0,
+      27.5
+    ],
+    "pull_bending_and_sliding": [
+      30.0,
+      34.0
+    ],
+    "opening": [
+      34.0,
+      36.5
+    ]
+  },
+  "interpretation": "Video supports combined elastic pad deformation and relative sliding. It supports using the recorded 8.17 N opposing-load peak and subsequent weakening as effective gripper behavior, rather than calling the 33 N closed-baseline change a holding force.",
+  "limitations": [
+    "Video and RTDE have no shared event synchronization; window boundaries are approximate.",
+    "Camera viewpoint and hidden contact patches prevent a reliable timestamp for the first microscopic slip.",
+    "Cube position and hand restraint were not instrumented; visible stationarity is qualitative.",
+    "The later 40 percent force-drop stop is not the start of sliding and does not establish a static breakaway peak."
+  ],
+  "review_date": "2026-10-06",
+  "local_reviewed_copy": {
+    "basename": "PXL_20261006_140923861~3.mp4",
+    "size_bytes": 45387379,
+    "sha256": "794096946d1991c63183f23137461757812bc53a3022ed1cb870107544eff752"
+  },
+  "remote_video": {
+    "provider": "Google Drive",
+    "file_id": "1Gqe8o3dv6_r9Unr9PKLsz1e4-YbefEPV",
+    "url": "https://drive.google.com/file/d/1Gqe8o3dv6_r9Unr9PKLsz1e4-YbefEPV/view?usp=drivesdk",
+    "reported_name": "gripper_slip_test.mp4",
+    "reported_mime_type": "video/mp4",
+    "reported_size_bytes": 45387379,
+    "metadata_readable_with_connected_account_on": "2026-10-06",
+    "size_matches_local_reviewed_copy": true,
+    "remote_checksum_verified": false,
+    "access_for_other_viewers_verified": false,
+    "sharing_changed": false
+  }
+}

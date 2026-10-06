@@ -1,10 +1,17 @@
 """Module to control Robotiq's grippers - tested with HAND-E"""
 
+import math
 import socket
 import threading
 import time
 from enum import Enum
 from typing import Union, Tuple, OrderedDict
+
+# Thunder's selected deployment operating point: pendant Speed 0% / Force 0%.
+# These are minimum hardware settings, not zero motion or zero gripping force.
+DEFAULT_GRIPPER_SPEED = 0
+DEFAULT_GRIPPER_FORCE = 0
+
 
 class RobotiqGripper:
     """
@@ -21,7 +28,7 @@ class RobotiqGripper:
     # READ VARIABLES
     STA = 'STA'  # status (0 = is reset, 1 = activating, 3 = active)
     PRE = 'PRE'  # position request (echo of last commanded position)
-    OBJ = 'OBJ'  # object detection (0 = moving, 1 = outer grip, 2 = inner grip, 3 = no object at rest)
+    OBJ = 'OBJ'  # object detection (0 = moving, 1 = opening contact, 2 = closing contact, 3 = at target)
     FLT = 'FLT'  # fault (0=ok, see manual for errors if not zero)
 
     ENCODING = 'UTF-8'  # ASCII and UTF-8 both seem to work
@@ -63,7 +70,27 @@ class RobotiqGripper:
 
     def disconnect(self) -> None:
         """Closes the connection with the gripper."""
-        self.socket.close()
+        if self.socket is not None:
+            self.socket.close()
+            self.socket = None
+
+    def stop(self) -> None:
+        """Stop finger motion without commanding an automatic release."""
+        if not self._set_var(self.GTO, 0):
+            raise RuntimeError('Gripper rejected stop')
+
+    @staticmethod
+    def _deadline(timeout_s):
+        if not math.isfinite(timeout_s) or timeout_s <= 0:
+            raise ValueError('timeout_s must be finite and positive')
+        return time.monotonic() + timeout_s
+
+    @staticmethod
+    def _remaining(deadline):
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise TimeoutError('Gripper operation timed out')
+        return remaining
 
     def _set_vars(self, var_dict: OrderedDict[str, Union[int, float]]):
         """Sends the appropriate command via socket to set the value of n variables, and waits for its 'ack' response.
@@ -115,7 +142,7 @@ class RobotiqGripper:
     def _is_ack(data: str):
         return data == b'ack'
 
-    def _reset(self):
+    def _reset(self, timeout_s=10.0):
         """
         Reset the gripper.
         The following code is executed in the corresponding script function
@@ -132,15 +159,20 @@ class RobotiqGripper:
             sleep(0.5)
         end
         """
-        self._set_var(self.ACT, 0)
-        self._set_var(self.ATR, 0)
+        deadline = self._deadline(timeout_s)
+        if not self._set_var(self.ACT, 0) or not self._set_var(self.ATR, 0):
+            raise RuntimeError('Gripper rejected reset')
         while (not self._get_var(self.ACT) == 0 or not self._get_var(self.STA) == 0):
+            self._remaining(deadline)
             self._set_var(self.ACT, 0)
             self._set_var(self.ATR, 0)
+            time.sleep(0.01)
         time.sleep(0.5)
+        self._remaining(deadline)
 
 
-    def activate(self, auto_calibrate: bool = True):
+    def activate(self, auto_calibrate: bool = True, timeout_s: float = 30.0,
+                 on_calibration_sample=None):
         """Resets the activation flag in the gripper, and sets it back to one, clearing previous fault flags.
         :param auto_calibrate: Whether to calibrate the minimum and maximum positions based on actual motion.
         The following code is executed in the corresponding script function
@@ -169,19 +201,24 @@ class RobotiqGripper:
             end
         end
         """
+        deadline = self._deadline(timeout_s)
         if not self.is_active():
-            self._reset()
+            self._reset(timeout_s=self._remaining(deadline))
             while (not self._get_var(self.ACT) == 0 or not self._get_var(self.STA) == 0):
+                self._remaining(deadline)
                 time.sleep(0.01)
 
-            self._set_var(self.ACT, 1)
+            if not self._set_var(self.ACT, 1):
+                raise RuntimeError('Gripper rejected activation')
             time.sleep(1.0)
             while (not self._get_var(self.ACT) == 1 or not self._get_var(self.STA) == 3):
+                self._remaining(deadline)
                 time.sleep(0.01)
 
         # auto-calibrate position range if desired
         if auto_calibrate:
-            self.auto_calibrate()
+            self.auto_calibrate(timeout_s=self._remaining(deadline), on_sample=on_calibration_sample)
+        self._remaining(deadline)
 
     def is_active(self):
         """Returns whether the gripper is active."""
@@ -216,28 +253,46 @@ class RobotiqGripper:
         """Returns the current position as returned by the physical hardware."""
         return self._get_var(self.POS)
 
-    def auto_calibrate(self, log: bool = True) -> None:
+    def auto_calibrate(self, log: bool = True, timeout_s: float = 20.0, on_sample=None) -> None:
         """Attempts to calibrate the open and closed positions, by slowly closing and opening the gripper.
+        Requires empty fingers. An interior positioning move precedes the endpoint sweep.
         :param log: Whether to print the results to log.
+        :param on_sample: Optional callback including the calibration phase.
         """
-        # first try to open in case we are holding an object
-        (position, status) = self.move_and_wait_for_pos(self.get_open_position(), 64, 1)
+        deadline = self._deadline(timeout_s)
+        def move(phase, target):
+            callback = None if on_sample is None else lambda state: on_sample(dict(state, phase=phase))
+            return self.move_and_wait_for_pos(target, 64, 1, timeout_s=self._remaining(deadline),
+                                              on_sample=callback)
+
+        # Physical endpoints need not equal the nominal requests 0/255. For example,
+        # an already-open Thunder reports POS=3, so requesting 0 produces no motion.
+        # Position inside the range first rather than relaxing stale-status checks.
+        midpoint = (self.get_open_position() + self.get_closed_position()) // 2
+        position, status = move('preposition', midpoint)
+        if status != self.ObjectStatus.AT_DEST:
+            raise RuntimeError(f'Calibration failed prepositioning empty fingers: {status.name}')
+        position, status = move('open_start', self.get_open_position())
         if RobotiqGripper.ObjectStatus(status) != RobotiqGripper.ObjectStatus.AT_DEST:
             raise RuntimeError(f"Calibration failed opening to start: {str(status)}")
+        open_position = position
 
         # try to close as far as possible, and record the number
-        (position, status) = self.move_and_wait_for_pos(self.get_closed_position(), 64, 1)
+        (position, status) = move('close', self.get_closed_position())
         if RobotiqGripper.ObjectStatus(status) != RobotiqGripper.ObjectStatus.AT_DEST:
             raise RuntimeError(f"Calibration failed because of an object: {str(status)}")
-        assert position <= self._max_position
-        self._max_position = position
+        if position > self._max_position or position <= open_position:
+            raise RuntimeError('Invalid closed calibration position')
+        closed_position = position
 
         # try to open as far as possible, and record the number
-        (position, status) = self.move_and_wait_for_pos(self.get_open_position(), 64, 1)
+        (position, status) = move('open_finish', self.get_open_position())
         if RobotiqGripper.ObjectStatus(status) != RobotiqGripper.ObjectStatus.AT_DEST:
             raise RuntimeError(f"Calibration failed because of an object: {str(status)}")
-        assert position >= self._min_position
-        self._min_position = position
+        if position < self._min_position or abs(position - open_position) > 2:
+            raise RuntimeError('Invalid open calibration position')
+        # Install both bounds only after a successful, repeatable complete sweep.
+        self._min_position, self._max_position = position, closed_position
 
         if log:
             print(f"Gripper auto-calibrated to [{self.get_min_position()}, {self.get_max_position()}]")
@@ -262,33 +317,70 @@ class RobotiqGripper:
         var_dict = OrderedDict([(self.POS, clip_pos), (self.SPE, clip_spe), (self.FOR, clip_for), (self.GTO, 1)])
         return self._set_vars(var_dict), clip_pos
 
-    def move_and_wait_for_pos(self, position: int, speed: int, force: int) -> Tuple[int, ObjectStatus]:  # noqa
+    def move_and_wait_for_pos(self, position: int, speed: int, force: int,
+                              timeout_s: float = 5.0, settle_s: float = 0.1,
+                              on_sample=None) -> Tuple[int, ObjectStatus]:  # noqa
         """Sends commands to start moving towards the given position, with the specified speed and force, and
         then waits for the move to complete.
         :param position: Position to move to [min_position, max_position]
         :param speed: Speed to move at [min_speed, max_speed]
         :param force: Force to use [min_force, max_force]
+        :param timeout_s: Overall deadline (individual socket calls also have a timeout).
+        :param settle_s: Continuous stopped interval required for completion.
+        :param on_sample: Optional callback for raw position/status/fault samples.
         :return: A tuple with an integer representing the last position returned by the gripper after it notified
         that the move had completed, a status indicating how the move ended (see ObjectStatus enum for details). Note
         that it is possible that the position was not reached, if an object was detected during motion.
         """
+        deadline = self._deadline(timeout_s)
+        if not math.isfinite(settle_s) or settle_s < 0:
+            raise ValueError('settle_s must be finite and nonnegative')
+        initial_pos = self.get_current_position()
+        if self._get_var(self.GTO) == 1 and self._get_var(self.OBJ) == self.ObjectStatus.MOVING.value:
+            raise RuntimeError('Gripper is already moving; stop or finish that command first')
+        started_at = time.monotonic()
         set_ok, cmd_pos = self.move(position, speed, force)
         if not set_ok:
             raise RuntimeError("Failed to set variables for move.")
 
-        # wait until the gripper acknowledges that it will try to go to the requested position
-        while self._get_var(self.PRE) != cmd_pos:
-            time.sleep(0.001)
-
-        # wait until not moving
-        cur_obj = self._get_var(self.OBJ)
-        while RobotiqGripper.ObjectStatus(cur_obj) == RobotiqGripper.ObjectStatus.MOVING:
-            cur_obj = self._get_var(self.OBJ)
-
-        # report the actual position and the object status
-        final_pos = self._get_var(self.POS)
-        final_obj = cur_obj
-        return final_pos, RobotiqGripper.ObjectStatus(final_obj)
+        seen_motion = False
+        stopped_at = stopped_pos = stopped_status = None
+        last_state = dict(commanded=cmd_pos, initial_position=initial_pos)
+        while True:
+            try:
+                self._remaining(deadline)
+            except TimeoutError:
+                error = TimeoutError(f'Gripper move timed out: {last_state}')
+                error.last_state = last_state
+                raise error from None
+            requested = self._get_var(self.PRE)
+            final_pos = self.get_current_position()
+            status = self.ObjectStatus(self._get_var(self.OBJ))
+            fault = self._get_var(self.FLT)
+            go_to = self._get_var(self.GTO)
+            now = time.monotonic()
+            seen_motion = seen_motion or (go_to == 1 and (status == self.ObjectStatus.MOVING or final_pos != initial_pos))
+            last_state = dict(t=now - started_at, position=final_pos, object_status=status.value,
+                              commanded=cmd_pos, requested_position=requested, fault=fault,
+                              go_to=go_to, initial_position=initial_pos, seen_motion=seen_motion)
+            if on_sample is not None:
+                on_sample(dict(last_state))
+            if fault:
+                raise RuntimeError(f'Gripper fault {fault}')
+            if not 0 <= final_pos <= 255 or not 0 <= requested <= 255:
+                raise RuntimeError('Invalid gripper position register')
+            # PRE can echo the new target while OBJ still describes the previous move.
+            # A changed position also proves motion when polling missed a short move.
+            no_op = (initial_pos == cmd_pos and final_pos == cmd_pos
+                     and status == self.ObjectStatus.AT_DEST)
+            stopped = go_to == 1 and requested == cmd_pos and (seen_motion or no_op) and status != self.ObjectStatus.MOVING
+            if not stopped:
+                stopped_at = stopped_pos = stopped_status = None
+            elif stopped_at is None or final_pos != stopped_pos or status != stopped_status:
+                stopped_at, stopped_pos, stopped_status = now, final_pos, status
+            elif now - stopped_at >= settle_s:
+                return final_pos, status
+            time.sleep(0.005)
 
 
 if __name__ == "__main__":

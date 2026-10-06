@@ -1,0 +1,60 @@
+{
+  "source_file": "pullout_cube60_s0_f0_travel10mm.npz",
+  "source_sha256": "54f1423552e8709143b1f30bf05b55a9610c908ba0a91e5ffb9db129a1c660af",
+  "review_date": "2026-10-06",
+  "operator_observation": "User confirmed that the TPU pads slid during this pull.",
+  "operator_observed_relative_sliding": true,
+  "restraint_method": "Hand-held on other faces; operator reports holding the cube stationary, as in retry4.",
+  "operator_cube_world_stationary": true,
+  "run_status": "complete",
+  "stop_reason": "slip",
+  "slip_armed": true,
+  "slip_candidate": true,
+  "preload_norm_N": 24.851731642925596,
+  "preload_along_direction_N": 24.836724121028578,
+  "peak_opposing_axial_load_N": 8.168788378461983,
+  "peak_opposing_load_travel_mm": 2.9706545300993703,
+  "stopped_travel_mm": 7.166828763640664,
+  "final_recorded_opposing_load_N": 4.789142223931919,
+  "force_windows": [
+    {
+      "travel_window_mm": [
+        1.5,
+        4.8
+      ],
+      "samples": 199,
+      "mean_opposing_N": 7.093372365820657,
+      "std_opposing_N": 0.5167330925794946,
+      "min_opposing_N": 6.2324125717888625,
+      "max_opposing_N": 8.168788378461983
+    },
+    {
+      "travel_window_mm": [
+        5.0,
+        7.0
+      ],
+      "samples": 125,
+      "mean_opposing_N": 5.302224383835674,
+      "std_opposing_N": 0.3508335237479109,
+      "min_opposing_N": 4.698777665395761,
+      "max_opposing_N": 6.1639155989007435
+    }
+  ],
+  "include_as_provisional_sliding_resistance_curve": true,
+  "include_as_maximum_static_holding_force": false,
+  "interpretation": "Initial approximately 24.84 N axial preload unloaded, then opposing load built to 8.17 N and weakened during further sliding. The loading peak later fell by over 40 percent, sustained for the detector hold interval, triggering a normal stop at 7.17 mm. Observed sliding agrees with the force-drop candidate, but its onset was not timestamped.",
+  "useful_for": "Force-versus-travel calibration for effective TPU pad bending and sliding at raw speed 0 / force 0 on the 60 mm cube. Preserve the weakening along travel rather than fitting only one force scalar.",
+  "limitation": "The video supports bending and sliding with the cube held against the table, but hand/cube motion is not measured precisely. Video and RTDE lack shared synchronization, and the first microscopic slip cannot be timestamped reliably. The later force-drop trigger does not establish static breakaway. Wrist load does not separately measure opposing normal finger squeeze or friction coefficient.",
+  "cleanup_errors": [],
+  "include_as_fixed_fixture_pullout_calibration": false,
+  "include_as_provisional_stationary_cube_force_curve": true,
+  "drop_threshold_N": 4.901273027077189,
+  "terminal_below_drop_threshold_duration_s": 0.05600000033155084,
+  "terminal_force_drop_start_travel_mm": 7.024175413369582,
+  "video_evidence_file": "../video_evidence.json",
+  "video_observed_pad_deformation": true,
+  "video_supports_relative_sliding": true,
+  "video_supports_cube_against_table": true,
+  "exact_video_sliding_onset_s": null,
+  "selection_role": "provisional_hand_restrained_curve_with_video"
+}
