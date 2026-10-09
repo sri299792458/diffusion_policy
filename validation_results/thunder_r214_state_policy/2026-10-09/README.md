@@ -17,10 +17,12 @@ base_link form, the L515 intrinsics and distortion, and the controller and gripp
 | --- | --- |
 | `dp_runN/state_policy_logs/episode_NNN.npz` | one row per policy step (observation, action, target, cube poses, gripper, grasp hold, rejected readings), one row per camera frame (`frame_*`: every AprilCube result with tag ids and corners, and the robot state at that frame), and `meta` (JSON) |
 | `dp_runN/replay_buffer.zarr` | RealEnv's own recording: robot state, actions and timestamps for every episode |
+| `dp_runN/videos/<episode>/0.mp4` | RealEnv's L515 color video of each episode (71 MB in all) |
 | `SHA256SUMS` | every file in this folder |
 
-The L515 episode videos are not included: about 72 MB, in `~/thunder_policy/dp_runN/videos/<episode>/0.mp4` on the
-workstation. Log `episode_NNN` goes with video folder `NNN`, except in `dp_run2`, which has no `meta`.
+Log `episode_NNN` goes with video folder `NNN`, except in `dp_run2`, which has no `meta`. `review_state_policy.py --video
+out.mp4` draws the detections and the poses the policy used on that video; when the workstation path recorded in `meta` is
+missing, it uses the video in this folder.
 
 ## Runs
 

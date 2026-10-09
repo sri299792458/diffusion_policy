@@ -2,6 +2,7 @@
 7c707aea95b8c94bb2446fc70b445bb6657a8145f23238435059d8d9ccca0b2e  ./dp_run1/replay_buffer.zarr/meta/episode_ends/.zarray
 2383746e67b4bcc2762b3f100f06c3fa2d5f149ab5a8e5da5d33521464a01959  ./dp_run1/replay_buffer.zarr/meta/.zgroup
 2383746e67b4bcc2762b3f100f06c3fa2d5f149ab5a8e5da5d33521464a01959  ./dp_run1/replay_buffer.zarr/.zgroup
+5bbd2eb84bd031a02f841c8deef8792f0e418f50678e7bbbc38fe1bda6b75e96  ./dp_run1/videos/0/0.mp4
 d05e085b8657982311d9d4f6962dd6e9c7943674ad10753cce430945e35d4af0  ./dp_run2/replay_buffer.zarr/data/action/0.0
 96b285ccd48d31a346751774352f867498b15d2f87dc3f81b87743ff0292e215  ./dp_run2/replay_buffer.zarr/data/action/.zarray
 03bf44dd504b94e1b3a4d3ab0796e1d42c3146d19288d36160fc32b1ec1dea65  ./dp_run2/replay_buffer.zarr/data/arm_joint_pos/0.0
@@ -26,6 +27,7 @@ af4faa27809ac064bb611d62f951f9d0cf75355b08e2a7c17c4e2d46b420b598  ./dp_run2/repl
 2383746e67b4bcc2762b3f100f06c3fa2d5f149ab5a8e5da5d33521464a01959  ./dp_run2/replay_buffer.zarr/meta/.zgroup
 2383746e67b4bcc2762b3f100f06c3fa2d5f149ab5a8e5da5d33521464a01959  ./dp_run2/replay_buffer.zarr/.zgroup
 12681901455347b1df6e0afcf7003998e23466258d479331cc118b3da1b95674  ./dp_run2/state_policy_logs/episode_000.npz
+72d4ee92438d8431a83597265ad924df388363345a25658c7246b3225ce0dc8b  ./dp_run2/videos/0/0.mp4
 20ecbf92104b92ad524787dde7592eed6d137c9a249da8b8cb3d5ef127e2d173  ./dp_run3/replay_buffer.zarr/data/action/0.0
 7889284a60266f12d4570e4ecfdc93ff24b004e1158af35c0b24453ef599f9b9  ./dp_run3/replay_buffer.zarr/data/action/.zarray
 b4046a652e2d89983ace5bede058500656dd05400d51b2b7be5ddb09c87e9632  ./dp_run3/replay_buffer.zarr/data/arm_joint_pos/0.0
@@ -52,6 +54,7 @@ af4faa27809ac064bb611d62f951f9d0cf75355b08e2a7c17c4e2d46b420b598  ./dp_run3/repl
 2383746e67b4bcc2762b3f100f06c3fa2d5f149ab5a8e5da5d33521464a01959  ./dp_run3/replay_buffer.zarr/meta/.zgroup
 2383746e67b4bcc2762b3f100f06c3fa2d5f149ab5a8e5da5d33521464a01959  ./dp_run3/replay_buffer.zarr/.zgroup
 bfcc9a1e4a5da34b1a6bca8191f0fe492e4dbdecea9d60b450528f4f8cefad3b  ./dp_run3/state_policy_logs/episode_000.npz
+4da753e5b2e3b47410305377f916c8003ef85c876c0f22a4d2c47c22fc216f71  ./dp_run3/videos/0/0.mp4
 44109714b5cdabda779d51f66157d7fd355582251f2612ebc7a8a9d7391613a7  ./dp_run4/replay_buffer.zarr/data/action/0.0
 7889284a60266f12d4570e4ecfdc93ff24b004e1158af35c0b24453ef599f9b9  ./dp_run4/replay_buffer.zarr/data/action/.zarray
 9af1c5750cc09928a4a1cd928da266f8d3ad0dc30dfeeecf5638a4b26c3f1d2e  ./dp_run4/replay_buffer.zarr/data/arm_joint_pos/0.0
@@ -78,6 +81,7 @@ af4faa27809ac064bb611d62f951f9d0cf75355b08e2a7c17c4e2d46b420b598  ./dp_run4/repl
 2383746e67b4bcc2762b3f100f06c3fa2d5f149ab5a8e5da5d33521464a01959  ./dp_run4/replay_buffer.zarr/meta/.zgroup
 2383746e67b4bcc2762b3f100f06c3fa2d5f149ab5a8e5da5d33521464a01959  ./dp_run4/replay_buffer.zarr/.zgroup
 def0513c173dc043d205ed30dd43ce3bee5fcc11e4339e3744006c38a56a19bb  ./dp_run4/state_policy_logs/episode_000.npz
+2ef6d1df7ca2ae6d092a97f2a98abc4d482e253128ac204516386e1a302d9c18  ./dp_run4/videos/0/0.mp4
 c24b296ef481e8571a5637b7bd189c9936472aa4bfed9ae2ba6cab25465d0bd0  ./dp_run5/replay_buffer.zarr/data/action/0.0
 5ae68acf0902f2dd58fc014d40cb1842bbefa69cb8ecfac6adb21297be9d7108  ./dp_run5/replay_buffer.zarr/data/action/1.0
 b754e9b37b7ccedc255df296a900815e0de8efb4222cb790b329328452ca949a  ./dp_run5/replay_buffer.zarr/data/action/.zarray
@@ -116,6 +120,8 @@ ad5e920c53c44e5b02bdb492f0c1708751001596337cef2559a0baedec3fbd2c  ./dp_run5/repl
 2383746e67b4bcc2762b3f100f06c3fa2d5f149ab5a8e5da5d33521464a01959  ./dp_run5/replay_buffer.zarr/.zgroup
 f67665d388ea97f544c06ce4d0772f3678a0a18cce82a311042da53a82dde0a0  ./dp_run5/state_policy_logs/episode_000.npz
 0f38b73a8d5ee7d8d4d6ef194fd3fecfac046bd7ecf814b60384b486e225ad05  ./dp_run5/state_policy_logs/episode_001.npz
+0732391c252e3e867a0aaf78ee595119b9e4bd7c0580a9a8ce25c90dd85cbeb0  ./dp_run5/videos/0/0.mp4
+5320b3f1582c02c323c5bf40865889bb00134047a61b4e0c0ec1102f331fd11b  ./dp_run5/videos/1/0.mp4
 d24356780fca1da919a30900e4e6d3b59108bd3e8601aff17f244f6573c2576f  ./dp_run6/replay_buffer.zarr/data/action/0.0
 7889284a60266f12d4570e4ecfdc93ff24b004e1158af35c0b24453ef599f9b9  ./dp_run6/replay_buffer.zarr/data/action/.zarray
 29063eabc30d96620e6508afa0100ca0077b1afb4975d6fc8b38e47cf5d4655f  ./dp_run6/replay_buffer.zarr/data/arm_joint_pos/0.0
@@ -142,6 +148,7 @@ af4faa27809ac064bb611d62f951f9d0cf75355b08e2a7c17c4e2d46b420b598  ./dp_run6/repl
 2383746e67b4bcc2762b3f100f06c3fa2d5f149ab5a8e5da5d33521464a01959  ./dp_run6/replay_buffer.zarr/meta/.zgroup
 2383746e67b4bcc2762b3f100f06c3fa2d5f149ab5a8e5da5d33521464a01959  ./dp_run6/replay_buffer.zarr/.zgroup
 233bc8eb5db1343b2c550b35d480073d07a324db4f9d35807980dfa7e508cc1f  ./dp_run6/state_policy_logs/episode_000.npz
+1902f76877b31d117100eb452b54f4901d8d2f209457b3ee5394104ac2c600de  ./dp_run6/videos/0/0.mp4
 21b2b25a735f9f5c0dd41ed5e4b4ab0c47edda4a2715fe3b1b0fcc4c5cdf8207  ./dp_run7/replay_buffer.zarr/data/action/0.0
 c112f703d9fdd44a551eb5b91de1dabcb2ecf8201e023274f11a918c1e9cc8ec  ./dp_run7/replay_buffer.zarr/data/action/1.0
 ae563832d8654065d272f4d687ff4d3a10bc1cb4809da7b6ef56d6f0a68dda7f  ./dp_run7/replay_buffer.zarr/data/action/2.0
@@ -202,6 +209,10 @@ b643bd051b453e7afc908ac8c682223bf8aa1f6b3131971e4352a7a0f1fa75ab  ./dp_run7/repl
 e809db8a0a68bcfacc35998f85864ab0e50c2b841afe728b44480cb96ad89b5d  ./dp_run7/state_policy_logs/episode_001.npz
 5ea504fbba3de37a5371d920c9d12ef3edc6a111d8f1ec5d6ce725ff807c2a93  ./dp_run7/state_policy_logs/episode_002.npz
 c72d1cafbe21f71a6da6ab31041767e52c166cb20b91b21c32b7718abcdb8d88  ./dp_run7/state_policy_logs/episode_003.npz
+cdf22c777068a610e1127464999b3faf867a3fa031f13084cbcd8babd3b21e13  ./dp_run7/videos/0/0.mp4
+e7db349e3daf5042456fbdd196f5ffbc838676740c3bcc76d78e70a2a36416d5  ./dp_run7/videos/1/0.mp4
+a815fbf681f91a4b2d6a339274d4f2f98c101567458cbb7c6af1d1dd62ef3501  ./dp_run7/videos/2/0.mp4
+1650b44cc74410fe82002ce606d54d97d9e167105272d6e0e0dcaca86d6fa9a4  ./dp_run7/videos/3/0.mp4
 1ab3790708c2c25eb442add55cde77eee5bd80fe7190eb75118f03f2b2402569  ./dp_run8/replay_buffer.zarr/data/action/0.0
 cfa03e404c47bab60d1ff1d857edbb2ccd38866d65efcb0acbcfa5a2babbb88f  ./dp_run8/replay_buffer.zarr/data/action/1.0
 1655472bdebe5e11451d961f109d38cb51f749112343411381ed9767d4914a43  ./dp_run8/replay_buffer.zarr/data/action/10.0
@@ -381,4 +392,8 @@ cfc25f74c8d8eef037d1abbba3a9ed28e3c0f5df6b2b8eaac80c0cd1ab74e8a8  ./dp_run8/repl
 b302932537af4e62718490960f7af6f10ea552007c6c10df681c968015d5fc7e  ./dp_run8/session1_tag_face_up_review.txt
 a3a90f46de373150ca158701958f8c61c845010df24519f35e3b55c9c7d5a785  ./dp_run8/state_policy_logs/episode_002.npz
 cef23d2004eb6c7cf7f3d70c97a4d4031f8073c6e7a77860395af7025bb70c0e  ./dp_run8/state_policy_logs/episode_003.npz
-b307856ec79dc66f057c157f8e06b3830ba9ed6a04e014f7f731e8b5315741b6  ./README.md
+8d1fd4c366c1e7acc4cebefb6124ee2a92039c41d1cdd7b6720848edb8cc96e6  ./dp_run8/videos/0/0.mp4
+9434e4a4887145935fb9af109cfade0cc781ec016d58f2c7e115e4d950c54a5a  ./dp_run8/videos/1/0.mp4
+f4840f664dbb765cca4b31a40c9b18e7c14f4a1298f79f1989b51141568a5a27  ./dp_run8/videos/2/0.mp4
+8fa97c852fbec50acae7858e00382445336bc65aaa1a749bfb94f1d0df477dae  ./dp_run8/videos/3/0.mp4
+835e0b963cf153c4f2ef45b9bdd87ff22d671b17099d3a0f9ef1ac9bf7a1665e  ./README.md

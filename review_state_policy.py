@@ -11,6 +11,7 @@ be). --video draws, on the L515 episode video, the detected tags, each detected 
 used (thick axes, after face relabelling), with the step's gripper state.
 """
 import json
+import pathlib
 import sys
 
 import click
@@ -173,6 +174,10 @@ def main(log_path, every, video):
           f"frame to frame median {np.median(gap):.0f} ms, max {gap.max():.0f}")
 
     if video:
+        recorded = pathlib.Path(meta['video'])
+        if not recorded.exists():                                   # archived run: the video sits next to the logs
+            meta['video'] = str(pathlib.Path(log_path).resolve().parent.parent / 'videos' / recorded.parent.name
+                                / recorded.name)
         write_video(z, meta, t0, relabel, video)
 
 
