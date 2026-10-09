@@ -1,6 +1,8 @@
 import os
 import time
 import enum
+import threading
+import importlib.metadata
 import multiprocessing as mp
 from multiprocessing.managers import SharedMemoryManager
 import numpy as np
@@ -18,12 +20,72 @@ from diffusion_policy.real_world.ur5e_kinematics import (
     apply_delta_pose, compute_pose_error,
     PAYLOAD_MASS, PAYLOAD_COG,
 )
+from diffusion_policy.real_world import ur5e_kinematics
+
+
+def _ur_rtde_version():
+    try:
+        return tuple(int(x) for x in importlib.metadata.version('ur-rtde').split('.')[:3])
+    except Exception:
+        return None
+
+
+# ur-rtde <= 1.6.3: directTorque(torque, friction_comp=False). From 1.6.4 the flag became per-joint viscous/coulomb
+# scales whose defaults are NONZERO (0.9/0.8), so "compensation off" must pass explicit zeros.
+def direct_torque_kwargs(version):
+    if version is None or version < (1, 6, 4):
+        return dict(friction_comp=False)
+    return dict(viscous_scale=[0.0] * 6, coulomb_scale=[0.0] * 6)
+
+
+DIRECT_TORQUE_KWARGS = direct_torque_kwargs(_ur_rtde_version())
+
+
+def install_kinematics_calibration(calibration):
+    """Replace ur5e_kinematics' calibrated joints / link inertials (default: UWLab's robot) with another robot's.
+    calibration: dict with "calibrated_joints" {"xyz", "rpy"} and "link_inertials" {"masses", "coms", "inertias"}."""
+    joints, inertials = calibration["calibrated_joints"], calibration["link_inertials"]
+    ur5e_kinematics.CALIBRATED_JOINTS = [{"xyz": np.array(x), "rpy": np.array(r)}
+                                         for x, r in zip(joints["xyz"], joints["rpy"])]
+    ur5e_kinematics.LINK_INERTIAS = [{"mass": m, "com": np.array(c), "I": np.array(i)}
+                                     for m, c, i in zip(inertials["masses"], inertials["coms"], inertials["inertias"])]
 
 
 class Command(enum.Enum):
     STOP = 0
     JointTorqueControl = 1   # Joint target -> FK -> OSC torque
     CartesianOSCControl = 2  # Absolute EE target -> direct OSC torque
+
+
+class GripperStateReader:
+    """Polls the gripper's position and object status from a thread so the 500 Hz loop never waits on the socket.
+    RobotiqGripper serializes socket access with its command_lock, so moves from the loop stay safe."""
+
+    def __init__(self, gripper, frequency=30.0):
+        self.gripper = gripper
+        self.period = 1.0 / frequency
+        self.values = {'gripper_position': 0.0, 'gripper_object_status': 0, 'gripper_state_timestamp': 0.0}
+        self.running = True
+        self.thread = threading.Thread(target=self._run, daemon=True)
+        self.thread.start()
+
+    def _run(self):
+        while self.running:
+            t = time.time()
+            try:
+                pos = float(self.gripper.get_current_position())
+                obj = int(self.gripper._get_var(self.gripper.OBJ))
+                self.values = {'gripper_position': pos, 'gripper_object_status': obj, 'gripper_state_timestamp': time.time()}
+            except Exception:
+                pass   # stale timestamp shows the failure to the consumer
+            time.sleep(max(0.0, self.period - (time.time() - t)))
+
+    def latest(self):
+        return dict(self.values)
+
+    def stop(self):
+        self.running = False
+        self.thread.join(timeout=1.0)
 
 
 class RTDEInterpolationController(mp.Process):
@@ -52,6 +114,13 @@ class RTDEInterpolationController(mp.Process):
                  osc_damping_ratio_rot=1.0,
                  osc_error_delta_pos=0.05,
                  osc_error_delta_rot=0.3,
+                 # robot-specific (defaults: UWLab's robot and gripper settings)
+                 payload_mass=None,
+                 payload_cog=None,
+                 kinematics_calibration=None,
+                 gripper_speed=128,
+                 gripper_force=128,
+                 read_gripper_state=False,
                  ):
         """
         Args:
@@ -82,6 +151,14 @@ class RTDEInterpolationController(mp.Process):
         self.soft_real_time = soft_real_time
         self.verbose = verbose
         self.tcp_offset = np.array(tcp_offset) if tcp_offset is not None else None
+        self.payload_mass = PAYLOAD_MASS if payload_mass is None else float(payload_mass)
+        self.payload_cog = PAYLOAD_COG if payload_cog is None else list(payload_cog)
+        self.kinematics_calibration = kinematics_calibration
+        if kinematics_calibration is not None:
+            install_kinematics_calibration(kinematics_calibration)   # this process; run() installs it in the child
+        self.gripper_speed = int(gripper_speed)
+        self.gripper_force = int(gripper_force)
+        self.read_gripper_state = bool(read_gripper_state)
         
         # Torque limits
         self.torque_max = np.array([150.0, 150.0, 150.0, 28.0, 28.0, 28.0], dtype=np.float64)
@@ -123,6 +200,10 @@ class RTDEInterpolationController(mp.Process):
         example['robot_receive_timestamp'] = time.time()
         example['osc_target_pos'] = np.zeros(3, dtype=np.float64)
         example['osc_target_quat'] = np.array([1.0, 0.0, 0.0, 0.0], dtype=np.float64)
+        if self.read_gripper_state:
+            example['gripper_position'] = 0.0          # Robotiq gPO (0 open .. 255)
+            example['gripper_object_status'] = 0       # Robotiq gOBJ (2 = stopped on contact while closing)
+            example['gripper_state_timestamp'] = 0.0   # time.time() of that read
         ring_buffer = SharedMemoryRingBuffer.create_from_examples(
             shm_manager=shm_manager,
             examples=example,
@@ -300,6 +381,8 @@ class RTDEInterpolationController(mp.Process):
             os.sched_setscheduler(
                 0, os.SCHED_RR, os.sched_param(20))
 
+        if self.kinematics_calibration is not None:
+            install_kinematics_calibration(self.kinematics_calibration)
         # start gripper
         gripper = RobotiqGripper()
         gripper.connect(self.robot_ip, self.gripper_port)
@@ -308,7 +391,7 @@ class RTDEInterpolationController(mp.Process):
         rtde_c = RTDEControlInterface(hostname=robot_ip, frequency=self.frequency,
                                       flags=RTDEControlInterface.FLAG_VERBOSE | RTDEControlInterface.FLAG_UPLOAD_SCRIPT)
         rtde_r = RTDEReceiveInterface(hostname=robot_ip, frequency=self.frequency)
-        rtde_c.setPayload(PAYLOAD_MASS, PAYLOAD_COG)
+        rtde_c.setPayload(self.payload_mass, self.payload_cog)
 
         try:
             if self.verbose:
@@ -321,6 +404,7 @@ class RTDEInterpolationController(mp.Process):
                                     self.joints_init_speed, 1.4)
 
             gripper.activate()
+            gripper_state = GripperStateReader(gripper) if self.read_gripper_state else None
 
             # main loop
             curr_joints = rtde_r.getActualQ()
@@ -352,7 +436,7 @@ class RTDEInterpolationController(mp.Process):
                         current_target_joints, curr_joints, curr_vel)
                 
                 # Send torque command
-                ok = rtde_c.directTorque(torque_cmd.tolist(), friction_comp=False)
+                ok = rtde_c.directTorque(torque_cmd.tolist(), **DIRECT_TORQUE_KWARGS)
                 if not ok:
                     if self.verbose:
                         print("[RTDETorqueController] directTorque failed")
@@ -360,11 +444,11 @@ class RTDEInterpolationController(mp.Process):
                 # update gripper state
                 if (current_gripper_close and
                         current_gripper_state == 'open'):
-                    gripper.move(gripper.get_closed_position(), 128, 128)
+                    gripper.move(gripper.get_closed_position(), self.gripper_speed, self.gripper_force)
                     current_gripper_state = 'closed'
                 elif (not current_gripper_close and
                       current_gripper_state == 'closed'):
-                    gripper.move(gripper.get_open_position(), 128, 128)
+                    gripper.move(gripper.get_open_position(), self.gripper_speed, self.gripper_force)
                     current_gripper_state = 'open'
 
                 # update robot state
@@ -374,7 +458,9 @@ class RTDEInterpolationController(mp.Process):
                 state['robot_receive_timestamp'] = time.time()
                 state['osc_target_pos'] = current_target_ee_pos.copy()
                 state['osc_target_quat'] = current_target_ee_quat.copy()
-                
+                if gripper_state is not None:
+                    state.update(gripper_state.latest())
+
                 self.ring_buffer.put(state)
 
                 # fetch command from queue
@@ -437,7 +523,7 @@ class RTDEInterpolationController(mp.Process):
             try:
                 # Send zero torque to stop
                 zero_torque = np.zeros(6)
-                rtde_c.directTorque(zero_torque.tolist(), friction_comp=False)
+                rtde_c.directTorque(zero_torque.tolist(), **DIRECT_TORQUE_KWARGS)
                 time.sleep(0.1)
                 
                 # Hold current position briefly to prevent drift
@@ -450,6 +536,8 @@ class RTDEInterpolationController(mp.Process):
                 if self.verbose:
                     print(f"[RTDETorqueController] Cleanup error: {e}")
 
+            if 'gripper_state' in locals() and gripper_state is not None:
+                gripper_state.stop()
             # terminate
             rtde_c.stopScript()
             rtde_c.disconnect()

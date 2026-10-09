@@ -69,6 +69,8 @@ class RealEnv:
             # shared memory
             shm_manager=None,
             rescale_pixels=True,
+            # extra RTDEInterpolationController arguments (robot calibration, payload, gripper settings)
+            robot_kwargs=None,
             ):
         assert frequency <= video_capture_fps
         output_dir = pathlib.Path(output_dir)
@@ -192,6 +194,7 @@ class RealEnv:
             osc_kp_rot=osc_kp_rot,
             osc_damping_ratio_pos=osc_damping_ratio_pos,
             osc_damping_ratio_rot=osc_damping_ratio_rot,
+            **(robot_kwargs or {}),
             )
 
         self.realsense = realsense
