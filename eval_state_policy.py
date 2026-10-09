@@ -33,6 +33,10 @@ same action timing, the same stuck-detection macro and keys. Differences, each r
     successful steps). R214 was trained to keep the stack within its success test (5 mm, 0.025 rad) until the time
     limit, which is tighter than the L515 can confirm next to the gripper (5-15 mm): in dp_run6 it re-gripped a good
     stack five times until the time limit.
+  - Controller-rate log (--high_rate_log, on by default): the controller records every 500 Hz loop (state, torque sent,
+    OSC target, motor currents; thunder_state_policy/high_rate_log.py) to <output>/high_rate_logs/<session>/, and each
+    policy step logs the time its target was sent (command_time) to align the two. For checking a simulator's arm model
+    in the regime the policy uses; RealEnv itself keeps only the last 30 controller samples.
 
 Policy in control: keep the hardware emergency stop at hand.
 Keys (OpenCV window "Policy Control"): S stop the episode, R move to the start pose and start a new episode,
@@ -175,12 +179,14 @@ class CubeDetectionThread:
               help='End the episode when the carried cube is seen resting on the bottom cube within this distance '
                    '(mm, horizontal, centre to centre) with the gripper open for 5 policy steps (0: run to the time '
                    'limit).')
+@click.option('--high_rate_log/--no_high_rate_log', default=True,
+              help='Record every 500 Hz controller loop to <output>/high_rate_logs/<session>/ (high_rate_log.py).')
 @click.option('--any_face_up/--tag_face_up', default=True,
               help='any_face_up: the carried cube may end on any face (its faces are relabelled so the face on top is '
                    '+Z, also after it lands on another face). tag_face_up: it keeps the faces its tags define, as in '
                    'training, whose goal is its tag +Z face up, so the policy turns it over when that face is not up.')
 def main(output, robot_ip, camera_transform, camera_transform_frame, l515_serial, resolution, init_joints,
-         max_duration, frequency, gripper_speed, grasp_hold_s, stack_stop_mm, any_face_up):
+         max_duration, frequency, gripper_speed, grasp_hold_s, stack_stop_mm, high_rate_log, any_face_up):
     import aprilcube
     m = R.load_manifest()
     act = R.load_policy(m)
@@ -201,6 +207,9 @@ def main(output, robot_ip, camera_transform, camera_transform_frame, l515_serial
     log_dir = output / 'state_policy_logs'
     log_dir.mkdir(parents=True, exist_ok=True)
     dt = 1 / frequency
+    high_rate_dir = (output / 'high_rate_logs' / time.strftime('%Y%m%dT%H%M%S')) if high_rate_log else None
+    if high_rate_dir is not None:
+        print(f"Controller-rate log: {high_rate_dir}")
 
     with SharedMemoryManager() as shm_manager:
         with RealEnv(
@@ -224,7 +233,7 @@ def main(output, robot_ip, camera_transform, camera_transform_frame, l515_serial
             video_crf=21,
             shm_manager=shm_manager,
             robot_kwargs=dict(kinematics_calibration=calibration, gripper_speed=gripper_speed, gripper_force=0,
-                              read_gripper_state=True, **R.THUNDER_PAYLOAD),
+                              read_gripper_state=True, high_rate_log_dir=high_rate_dir, **R.THUNDER_PAYLOAD),
         ) as env:
             # OpenCV keeps its default thread count here: cube detection is the heavy work in this process.
             # RealEnv waits only launch_timeout (3 s) for the robot; with -j its controller first moves to the start
@@ -255,7 +264,7 @@ def main(output, robot_ip, camera_transform, camera_transform_frame, l515_serial
                 camera_transform_frame=camera_transform_frame, T_base_camera=T_base_camera.tolist(),
                 frequency=frequency, action_scale=scale.tolist(), policy_sha256=m['policy']['sha256'],
                 gripper=dict(speed=gripper_speed, force=0), grasp_hold_s=grasp_hold_s, any_face_up=any_face_up,
-                stack_stop_mm=stack_stop_mm,
+                stack_stop_mm=stack_stop_mm, high_rate_log_dir=None if high_rate_dir is None else str(high_rate_dir),
                 start_joints=R.START_JOINTS, init_joints=init_joints, max_duration=max_duration,
                 controller=dict(kp=np.diag(env.robot.osc_Kp).tolist(), kd=np.diag(env.robot.osc_Kd).tolist(),
                                 error_clip_pos_m=env.robot.osc_error_delta_pos,
@@ -396,11 +405,12 @@ def main(output, robot_ip, camera_transform, camera_transform_frame, l515_serial
                         if np.sum(is_new) == 0:
                             next_step_idx = int(np.ceil((curr_time - eval_t_start) / dt))
                             action_timestamps = np.array([eval_t_start + next_step_idx * dt])
+                        command_time = time.time()
                         env.exec_actions(actions=target_actions, timestamps=action_timestamps, obs_actions=raw_actions)
                         closed_cmd = bool(gripper_actions[0, 0] < 0)
                         last_action = raw_actions[0].copy()       # what the arm/gripper were asked to do (as in sim)
 
-                        log.append(dict(t=float(obs_timestamps[-1]), q=q.copy(), qd=np.array(obs['arm_joint_vel'][-1]),
+                        log.append(dict(t=float(obs_timestamps[-1]), command_time=command_time, q=q.copy(), qd=np.array(obs['arm_joint_vel'][-1]),
                                         tcp_force=np.array(obs['tcp_force'][-1]), gripper_position=gpos, gripper_object=gobj,
                                         holding=holding, obs=obs_vec, action=action, executed_action=raw_actions[0].copy(),
                                         target=target_actions[0].copy(),

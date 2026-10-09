@@ -121,6 +121,7 @@ class RTDEInterpolationController(mp.Process):
                  gripper_speed=128,
                  gripper_force=128,
                  read_gripper_state=False,
+                 high_rate_log_dir=None,
                  ):
         """
         Args:
@@ -134,6 +135,7 @@ class RTDEInterpolationController(mp.Process):
             osc_kp_rot: OSC rotation stiffness
             osc_damping_ratio_pos: OSC position damping ratio
             osc_damping_ratio_rot: OSC rotation damping ratio
+            high_rate_log_dir: if set, every control loop is recorded there (thunder_state_policy/high_rate_log.py)
         """
         # verify
         assert 0 < frequency <= 500
@@ -159,6 +161,7 @@ class RTDEInterpolationController(mp.Process):
         self.gripper_speed = int(gripper_speed)
         self.gripper_force = int(gripper_force)
         self.read_gripper_state = bool(read_gripper_state)
+        self.high_rate_log_dir = None if high_rate_log_dir is None else str(high_rate_log_dir)
         
         # Torque limits
         self.torque_max = np.array([150.0, 150.0, 150.0, 28.0, 28.0, 28.0], dtype=np.float64)
@@ -392,6 +395,18 @@ class RTDEInterpolationController(mp.Process):
                                       flags=RTDEControlInterface.FLAG_VERBOSE | RTDEControlInterface.FLAG_UPLOAD_SCRIPT)
         rtde_r = RTDEReceiveInterface(hostname=robot_ip, frequency=self.frequency)
         rtde_c.setPayload(self.payload_mass, self.payload_cog)
+        hr_log = None
+        if self.high_rate_log_dir is not None:
+            from diffusion_policy.real_world.thunder_state_policy.high_rate_log import HighRateLog
+            hr_log = HighRateLog(self.high_rate_log_dir, meta=dict(
+                frequency=self.frequency, osc_Kp=np.diag(self.osc_Kp).tolist(), osc_Kd=np.diag(self.osc_Kd).tolist(),
+                osc_error_delta_pos=self.osc_error_delta_pos, osc_error_delta_rot=self.osc_error_delta_rot,
+                torque_max=self.torque_max.tolist(), payload_mass=self.payload_mass, payload_cog=self.payload_cog,
+                direct_torque_kwargs=DIRECT_TORQUE_KWARGS, ur_rtde_version=_ur_rtde_version(),
+                kinematics_calibration=self.kinematics_calibration is not None,
+                gripper_speed=self.gripper_speed, gripper_force=self.gripper_force,
+                soft_real_time=self.soft_real_time, start_time=time.time()))
+        target_seq = 0
 
         try:
             if self.verbose:
@@ -425,6 +440,8 @@ class RTDEInterpolationController(mp.Process):
 
                 curr_joints = np.array(rtde_r.getActualQ(), dtype=np.float64)
                 curr_vel = np.array(rtde_r.getActualQd(), dtype=np.float64)
+                if hr_log is not None:
+                    t_host, t_robot = time.time(), rtde_r.getTimestamp()
                 
                 # Compute OSC torque command
                 if use_cartesian_target and current_target_ee_pos is not None:
@@ -462,6 +479,12 @@ class RTDEInterpolationController(mp.Process):
                     state.update(gripper_state.latest())
 
                 self.ring_buffer.put(state)
+                if hr_log is not None:
+                    hr_log.append(t_host=t_host, t_robot=t_robot, q=curr_joints, qd=curr_vel, torque=torque_cmd,
+                                  target_pos=current_target_ee_pos, target_quat=current_target_ee_quat,
+                                  current=rtde_r.getActualCurrent(), tcp_force=state.get('ActualTCPForce', np.nan),
+                                  gripper_close_cmd=float(current_gripper_close),
+                                  gripper_position=state.get('gripper_position', np.nan), target_seq=target_seq)
 
                 # fetch command from queue
                 try:
@@ -486,6 +509,7 @@ class RTDEInterpolationController(mp.Process):
                         elif cmd == Command.JointTorqueControl.value:
                             # Joint target -> FK -> OSC
                             current_target_joints = np.array(command['target_joints'], dtype=np.float64)
+                            target_seq += 1
                             current_target_ee_pos, current_target_ee_quat = get_ee_pose(current_target_joints)
                             use_cartesian_target = False
                             current_gripper_close = command['close_gripper'][0] if isinstance(command['close_gripper'], np.ndarray) else command['close_gripper']
@@ -496,6 +520,7 @@ class RTDEInterpolationController(mp.Process):
                             # Absolute EE target -> direct OSC
                             current_target_ee_pos = np.array(command['target_ee_pos'], dtype=np.float64)
                             current_target_ee_quat = np.array(command['target_ee_quat'], dtype=np.float64)
+                            target_seq += 1
                             use_cartesian_target = True
                             current_gripper_close = command['close_gripper'][0] if isinstance(command['close_gripper'], np.ndarray) else command['close_gripper']
                             if self.verbose:
@@ -538,6 +563,10 @@ class RTDEInterpolationController(mp.Process):
 
             if 'gripper_state' in locals() and gripper_state is not None:
                 gripper_state.stop()
+            if hr_log is not None:
+                errors = hr_log.close()
+                if errors:
+                    print(f"[RTDETorqueController] high-rate log write errors: {errors}")
             # terminate
             rtde_c.stopScript()
             rtde_c.disconnect()
